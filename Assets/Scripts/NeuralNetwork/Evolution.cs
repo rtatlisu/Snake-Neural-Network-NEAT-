@@ -44,6 +44,7 @@ public static class Evolution
             sumOfFitness = snakes[0].GetComponent<Snake>().boardScript.fitness;
         }
         List<GameObject> orderedFitness = new List<GameObject>();
+       
         if(snakes.Count > 1)
         {
             for(int i = 0; i < snakes.Count; i++)
@@ -91,6 +92,7 @@ public static class Evolution
         //this process gotta happen 2*snakePop times, 2 because 2 parents
         //rnd will be random floats with 2 decimal places, e.g. 0.32, 0.6, 0.99,...
         List<GameObject> parents = new List<GameObject>();
+       
         if(orderedFitness.Count > 1)
         {
             while(parents.Count < 2)
@@ -137,6 +139,8 @@ public static class Evolution
 
    public static Network Crossover(List<GameObject> parents) //needed parameters: taking in 2 snakes 
    {
+    if(parents.Count > 1)
+    {
         int parent1Size = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
         int parent2Size = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
         List<Synapse> parent1Genes = new List<Synapse>();
@@ -151,14 +155,12 @@ public static class Evolution
         for(int i = 0; i < parent1Size; i++)
         {
             matchingFound = false;
+            
             matchingIndexP1 = -1;
             matchingIndexP2 = -1;
             for(int j = 0; j < parent2Size; j++)
             {
                 //both hhave the gene, 50/50
-                Debug.Log("Connections: " +parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[i].GetInnovationnumber() +" == "+
-                parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[j].GetInnovationnumber() );
-
                 if(parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[i].GetInnovationnumber() ==
                 parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[j].GetInnovationnumber())
                 {
@@ -420,7 +422,13 @@ public static class Evolution
             
          
         }
-    return childBrain;
+        return childBrain;
+    }
+    //for 1-member species
+    else
+    {
+        return parents[0].GetComponent<Snake>().brain;
+    }
    }
 
 

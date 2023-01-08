@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class NNVisualizer : MonoBehaviour
 {
     Board boardScript;
@@ -20,6 +21,7 @@ public class NNVisualizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+       
         boardScript = transform.parent.gameObject.GetComponent<Board>();
         transform.position = transform.parent.position + new Vector3(Board.boarderSizeX-1,Board.boarderSizeX-1,0)
         + Vector3.right*2;

@@ -6,6 +6,7 @@ using TMPro;
 
 public class Board : MonoBehaviour
 {
+    public int boardNumber;
     public GameObject boarderTiles;
     public GameObject fruitPrefab;
     public GameObject fruitInstance;
@@ -24,11 +25,12 @@ public class Board : MonoBehaviour
     public  GameObject nnVisualizer;
     public GameObject nnvInstance;
     bool newGen;
-    TextMeshProUGUI fitnessRef, movesLeftRef, distanceRef, fruitsRef;
+    TextMeshProUGUI fitnessRef, movesLeftRef, distanceRef, fruitsRef, speciesRef;
     public int fitness = 0;
      public int fruitsEaten = 0;
      public int distTravelled = 0;
      public int movesLeft = 50;
+     public int species = 0;
      public Network childBrain = null;
      
     
@@ -36,16 +38,19 @@ public class Board : MonoBehaviour
     
    void Awake()
    {   
-    fitnessRef = transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
-    fruitsRef = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-    distanceRef = transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
-    movesLeftRef = transform.GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>();
+    speciesRef = transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+    fitnessRef = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+    fruitsRef = transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
+    distanceRef = transform.GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>();
+    movesLeftRef = transform.GetChild(0).GetChild(4).GetComponent<TextMeshProUGUI>();
+    boardNumber = GameManager.instance.boardNumber;
    }
 
    
     void Start()
     { 
-        
+   
+       
         nnvInstance = Instantiate(nnVisualizer,Vector3.zero,Quaternion.identity);
         nnvInstance.transform.parent = this.gameObject.transform;
         nnvInstance.name = "NNVisualizer";
@@ -114,26 +119,31 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        speciesRef.text = "Species: " + species;
         fitnessRef.text = "Fitness: "+fitness;
         fruitsRef.text = "Fruits: " + fruitsEaten;
         distanceRef.text = "Distance: " + distTravelled;
         movesLeftRef.text = "Moves left: " + movesLeft;
-    
-   
-        if(snakeScript == null)
+
+      
+        if (snakeScript == null)
         {
+  
+           
              snakeInstance = Instantiate(snakePrefab, Vector2.zero, Quaternion.identity);
              snakeInstance.name = "Snake";
              snakeInstance.transform.parent = this.transform;
              snakeScript = snakeInstance.GetComponent<Snake>();
              gameOver = false;
              movesLeft = 100;
-        }
-       
         
+        }
 
+
+        
           if(snakeScript.brain != null && !newGen)
             {
+            
                 newGen = true;
                 //draw nodes
                 //input
@@ -163,27 +173,27 @@ public class Board : MonoBehaviour
                         snakeScript.brain.layers[snakeScript.brain.layers.Count-1][i].layer, "Output"
                         ,Vector2.zero, Vector2.zero);
                 }
-                
 
-                //when drawing the net, the net already exists.
-                //meaning, with the shifts of the last layer, there will be an ordered list
-                //with 1 hidden layer it will be [input, hidden, output].
-                //the shhift that only happens in a list now must happen visually
-                //if input and output are drawn, we can start from the last hidden layer
-                //and always insert at index 1, moving all other nodes to the right
 
-                //hidden
-                //need the two nodes to place the new node inbetween
-                //additionally: remove the existng connection between A and B, place node C
-                //on position (A+B)/2, connect A with C and C with B
+            //when drawing the net, the net already exists.
+            //meaning, with the shifts of the last layer, there will be an ordered list
+            //with 1 hidden layer it will be [input, hidden, output].
+            //the shhift that only happens in a list now must happen visually
+            //if input and output are drawn, we can start from the last hidden layer
+            //and always insert at index 1, moving all other nodes to the right
 
-                //if no connections exit, set gameover true and gamerunning false, since the snake wont move and the game wouldnt end for it
-                //IMPORTANT: if all connections are disabled, the snake wouldnt move as well
-                //if snake cant move because the output doesnt suit the requirements, game needs to end as well (snake should move up
-                //but is facing down)
-                
-                
-                
+            //hidden
+            //need the two nodes to place the new node inbetween
+            //additionally: remove the existng connection between A and B, place node C
+            //on position (A+B)/2, connect A with C and C with B
+
+            //if no connections exit, set gameover true and gamerunning false, since the snake wont move and the game wouldnt end for it
+            //IMPORTANT: if all connections are disabled, the snake wouldnt move as well
+            //if snake cant move because the output doesnt suit the requirements, game needs to end as well (snake should move up
+            //but is facing down)
+
+
+     
                 //draw connections
                for(int i = 0; i < snakeScript.brain.genomeConnectionGenes.Count; i++)
                {    
@@ -254,7 +264,7 @@ public class Board : MonoBehaviour
         //snake attach its brain to itself
         //give snake brain and vision
         //if gen 1 -> default creation, else -> attach crossed brain
-
+  
         if(snakeScript.brain == null && snakeScript.snakeComposites != null &&
         snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen == 1) 
         {
@@ -267,7 +277,8 @@ public class Board : MonoBehaviour
             snakeScript.brain.UpdateInputNodes(snakeScript.inputs);       
         }
 
-        //thhis is for all children      
+        //thhis is for all children 
+          
         else if(snakeScript.brain == null && snakeScript.snakeComposites != null &&
         snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen > 1 && childBrain != null)
         {
@@ -277,7 +288,6 @@ public class Board : MonoBehaviour
             snakeScript.south, snakeScript.west};
 
             snakeScript.brain =  childBrain;
-            print("childbrain: " + childBrain);
             snakeScript.brain.UpdateInputNodes(snakeScript.inputs);
 
         } 
