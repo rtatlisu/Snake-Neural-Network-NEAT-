@@ -37,17 +37,18 @@ public class GameManager : MonoBehaviour
     //public List<List<Snake>> species;
     public List<List<GameObject>> species;
     int speciesNum = 1;
-    float compatabilityTreshhold = 3.0f;
+
+    public float compat_threshhold = 3.0f;
+    float compat_modifier = 0.3f;
+    int num_species_target = 5;
+    public float mutationPower = 2.5f;
+
     float sumOfAdjFitnesses = 0.0f;
     List<GameObject> snakes;
     List<Network> networks;
     List<GameObject> inactiveBoards;
     public int boardNumber = 0;
-
-
-
-
-
+    List<int> offspringNum;
 
 
     void Awake()
@@ -99,6 +100,8 @@ public class GameManager : MonoBehaviour
             }
 
         }
+
+      
         if(startEvolving)
         {   
             if(Time.time > restart && !evolved)
@@ -106,7 +109,7 @@ public class GameManager : MonoBehaviour
 
                 gen +=1;
                 generation.text = "Generation: " + gen;
-                speciesTxt.text = "Species: " + species.Count;
+              //  speciesTxt.text = "Species: " + species.Count;
                 evolved = true;
                 startEvolving = false;
                 boardsSpawned = false;
@@ -117,95 +120,58 @@ public class GameManager : MonoBehaviour
                 snakes = new List<GameObject>(); 
                  //taking in all the snakes
                  //for later: handle speciation if everything works
+       
                  for(int j = 0; j < listOfBoards.Count; j++)
                  {
-                     snakes.Add(listOfBoards[j].GetComponent<Board>().snakeInstance);
-
-                 }
-       
-            //EXPERIMENTAL
-            /*
-                if(listOfBoards.Count != 0)
-                {
-                    while(listOfBoards.Count > 0)
-                    {
-                        Destroy(listOfBoards[0]);
-                        listOfBoards.RemoveAt(0);
-           
-                    }
                     
-                listOfBoards = new List<GameObject>();
-                
+                        snakes.Add(listOfBoards[j].GetComponent<Board>().snakeInstance);
+                 }
+
+                int num_species = species.Count;
+                if (num_species < num_species_target)
+                {
+                    compat_threshhold -= compat_modifier;
+                }
+                else
+                {
+                    compat_threshhold += compat_modifier;
                 }
 
-            
-                SpawnBoards();
-                NetworkManager.instance.listOfNetworks = null;
-                NetworkManager.instance.listOfNetworks = new List<Network>();
-               */
-            //todo:
-            //something is off with the compatability calculation in networkmanager
-            //ad-hoc solution: for every species, create a childSpecies list directly correlated to the species list, i.e.
-            //species[0] analogue to childSPecies[0]
-            //species[x][0] will be the representative for allocating the species to the childs and after all snakes have been
-            //assigned a species, i.e. have been put in one of the childSpecies lists, we say species[x] = childSpecies[x] for
-            //all lists
-            //important case:
-            //if one of the x childSpecies remains empty at the end, thhis means that a species "goes extinct" and will no longer
-            //bbe represented in the next gen. thhus, after referencing the empty list in species[x], we hhave to check in the next iteration
-            //if species[x] is empty and if so, delete it
-            //second important case:
-            //when a new species is created, we could theoretically just deal with one more list of species than childSpecies, but
-            //this could be unhandy for the referencing at the end so we will instead to the following:
-            //we create a new species list, but also a new childSpecies list and bboth new lists will referene the same snake(s),
-            //the referencing at the end is useless for these lists, but prevents indexoutofbounds exceptions
-            //after implementing the strategy, we no longer need the bool list "parentsRemoved"
+                if(compat_threshhold < 0.3f)
+                {
+                    compat_threshhold = 0.3f;
+                }
+
+
+
+                //todo:
+                //something is off with the compatability calculation in networkmanager
+                //ad-hoc solution: for every species, create a childSpecies list directly correlated to the species list, i.e.
+                //species[0] analogue to childSPecies[0]
+                //species[x][0] will be the representative for allocating the species to the childs and after all snakes have been
+                //assigned a species, i.e. have been put in one of the childSpecies lists, we say species[x] = childSpecies[x] for
+                //all lists
+                //important case:
+                //if one of the x childSpecies remains empty at the end, thhis means that a species "goes extinct" and will no longer
+                //bbe represented in the next gen. thhus, after referencing the empty list in species[x], we hhave to check in the next iteration
+                //if species[x] is empty and if so, delete it
+                //second important case:
+                //when a new species is created, we could theoretically just deal with one more list of species than childSpecies, but
+                //this could be unhandy for the referencing at the end so we will instead to the following:
+                //we create a new species list, but also a new childSpecies list and bboth new lists will referene the same snake(s),
+                //the referencing at the end is useless for these lists, but prevents indexoutofbounds exceptions
+                //after implementing the strategy, we no longer need the bool list "parentsRemoved"
 
                 //SPECIATION
-                //checking if there are members in a species that have bbeen deleted bbut are still referenced in thhe list -> delete the reference
-                /*
-                for(int i = 0; i < species.Count; i++)
-                {
-                    for(int j = 0; j < species[i].Count; j++)
-                    {
-                        if(species[i][j] == null)
-                        {
-                            print("soecies: "+species[i][j]);
-                            species[i].RemoveAt(j);
-
-                        }
-                    }
-
-                    if(species[i].Count == 0)
-                    {
-                        species.RemoveAt(i);
-                    }
-                    
-                }
-                 */
-               List<bool> parentsRemoved = new List<bool>();
+                List<bool> parentsRemoved = new List<bool>();
                 List<List<GameObject>> childSpecies = new List<List<GameObject>>();
 
-        /*
-                if(species.Count > 0)
-                {
-                    for(int x = 0; x < species.Count; x++)
-                    {
-                        parentsRemoved.Add(false);
-                    }
-                }
-                else if(species.Count == 0)
-                {
-                    parentsRemoved.Add(true);
-                }
-         */    
+           
                 for(int i = 0; i < species.Count; i++)
                 {
                     childSpecies.Add(new List<GameObject>());
                 }
                
-
-                
                 for(int i = 0; i < snakes.Count; i++)
                 {
 
@@ -214,64 +180,49 @@ public class GameManager : MonoBehaviour
                     {
                         species.Add(new List<GameObject>());
                         species[0].Add(snakes[i]);
-                        
-                 
-       
-                        snakes[i].GetComponent<Snake>().boardScript.species = speciesNum;
+                         //snakes[i].GetComponent<Snake>().boardScript.species =/* speciesNum*/species.Count;
+                        //listOfBoards[i].GetComponent<Board>().species = species.Count;
                     }
                     else if(species.Count > 0 && gen == 2)
                     {
-
                         bool createSpecies = false;
                         for(int j = 0; j < species.Count; j++)
                         {
                             //comp. threshhold = 3
                             //if >= 3, snake doesnt fit in the compared species
-                           
-
                             if(NetworkManager.instance.CompatabilityDistance(snakes[i].GetComponent<Snake>().brain.genomeConnectionGenes,
-                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compatabilityTreshhold)
+                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
                             {
-                                createSpecies = true;
-                                
+                                createSpecies = true;                            
                             }
                             else
                             {
                                 createSpecies = false;
-                                 int temp = species[j][0].GetComponent<Snake>().boardScript.species;
-                             
-          
-                                 //when the parental genes are still in the list as a reference to know which species a snake should belong to, we
-                                 //add the first matchhing snake into that list after we cleared all parents
-                                 //from there on, when a snake is added to the same list, the list will not be cleared since it contains only children
-/*
-                                if(parentsRemoved[j] == false)
-                                 {
-                                    species[j].Clear();
-                                    parentsRemoved[j] = true;
-                                 }
-*/
+                                int temp = species[j][0].GetComponent<Snake>().boardScript.species;
                                 species[j].Add(snakes[i]);
-                           //     Debug.Log("2: "+species[j][species[j].Count-1]);
-                                snakes[i].GetComponent<Snake>().boardScript.species = temp;
+                               //  snakes[i].GetComponent<Snake>().boardScript.species = temp;
+                               // listOfBoards[i].GetComponent<Board>().species = temp;
                                 break;
                             }
                         }
 
                         if(createSpecies)
                         {
-                            ++speciesNum;
-                            species.Add(new List<GameObject>());
-                       
+                           // ++speciesNum;
+                            species.Add(new List<GameObject>());                       
                             species[species.Count-1].Add(snakes[i]);
-                
-                         //   Debug.Log("3: " + species[species.Count-1][species[species.Count-1].Count-1]);
-                            snakes[i].GetComponent<Snake>().boardScript.species = speciesNum;
-                            parentsRemoved.Add(true);
-
-                            
+                            // snakes[i].GetComponent<Snake>().boardScript.species = /*speciesNum*/species.Count;
+                           // listOfBoards[i].GetComponent<Board>().species = species.Count;
+                            parentsRemoved.Add(true);     
                         }
                     }
+                    //prolem:
+                    //if a new species is created, it is not considered for future snakes to be classified, hence there is the scenario
+                    //where we go from 1-2 species to 5-6 instantly, even though many of the species could belong together
+                    //ad-hoc solution: when a new species is created, we re-classify every snake
+                    //2nd solution: normally the species list only consists of the parental generation, but as we create a new species(childspecies)
+                    //we could also create a new species(parental) and let it function as if it were from the last gen
+                    //2nd solution will be attempted first
                     else if(species.Count > 0 && gen > 2)
                     {
                         bool createSpecies = false;
@@ -279,47 +230,42 @@ public class GameManager : MonoBehaviour
                         {
                             //comp. threshhold = 3
                             //if >= 3, snake doesnt fit in the compared species
-                     
-                            print("A: " + snakes[i].GetComponent<Snake>().boardScript.boardNumber + " B: " +
-                            species[j][0].GetComponent<Snake>().boardScript.boardNumber);
+                            //problem:
+                            //we seem to have a higher species count than actual species in the parental generation before
+                            //assigning the now children to thhe species list
+                            //                    print(species.Count + " " + j + " " + snakes.Count + " " + i);
+                            //                    print("A: " + snakes[i].GetComponent<Snake>().boardScript.boardNumber + " B: " +
+                            //                    species[j][0].GetComponent<Snake>().boardScript.boardNumber);
+                            print(species.Count + " " + j + " " + species[j].Count);
+                            
                             if(NetworkManager.instance.CompatabilityDistance(snakes[i].GetComponent<Snake>().brain.genomeConnectionGenes,
-                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compatabilityTreshhold)
+                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
                             {
                                 createSpecies = true;
                             }
                             else
                             {
                                 createSpecies = false;
-                                 int temp = species[j][0].GetComponent<Snake>().boardScript.species;
-                             
-          
-                                 //when the parental genes are still in the list as a reference to know which species a snake should belong to, we
-                                 //add the first matchhing snake into that list after we cleared all parents
-                                 //from there on, when a snake is added to the same list, the list will not be cleared since it contains only children
-
+                                int temp = species[j][0].GetComponent<Snake>().boardScript.species;
                                 childSpecies[j].Add(snakes[i]);
-                           //     Debug.Log("2: "+species[j][species[j].Count-1]);
-                                snakes[i].GetComponent<Snake>().boardScript.species = temp;
+                                // snakes[i].GetComponent<Snake>().boardScript.species = temp;
+                                //listOfBoards[i].GetComponent<Board>().species = temp;
                                 break;
                             }
                         }
 
                         if(createSpecies)
                         {
-                            ++speciesNum;
+                            //speciesnum needs to be reworked probably
+                           // ++speciesNum;
                             species.Add(new List<GameObject>());
                             childSpecies.Add(new List<GameObject>());
                             species[species.Count-1].Add(snakes[i]);
                             childSpecies[childSpecies.Count-1].Add(snakes[i]);
-                         //   Debug.Log("3: " + species[species.Count-1][species[species.Count-1].Count-1]);
-                            snakes[i].GetComponent<Snake>().boardScript.species = speciesNum;
-                 
-                            
+                            // snakes[i].GetComponent<Snake>().boardScript.species = /*speciesNum*/species.Count;
+                            //listOfBoards[i].GetComponent<Board>().species = species.Count;
                         }
-
-                    }
-                  
-                  
+                    }       
                 }
 
                 //this loop solves the case of having more species in the parental generation than in thhe upcoming generation
@@ -330,6 +276,7 @@ public class GameManager : MonoBehaviour
                     if (childSpecies[i].Count == 0)
                     {
                         childSpecies.RemoveAt(i);
+                        i = 0;
                     }
                 }
 
@@ -337,60 +284,24 @@ public class GameManager : MonoBehaviour
                 {
                     species = childSpecies;
                 }
+                
+         
 
-            //todo:
-            //problem is the following: when a species consists of only 1 member, it cant reproduce and causes an error
-            //how it occured: whhen snake A differs from snake B so much that one of the snakes is put in another species, we have two 1-member species
-            //solution: asexual reproduction, i.e. reproduction with 1 member needs to be implemented
-            
-               networks = new List<Network>();
+                //selection, crossover, mutation
+                networks = new List<Network>();
            
-                if(species.Count== 0)
-                {
-                   
-                    for(int i = 0; i < listOfBoards.Count; i++)
-                    {
-            
-                        Network network =   Evolution.Crossover(Evolution.Selection(snakes));
-
-                        int rnd = Random.Range(1,101);
-                        if(rnd <= (addNodeProb*100))
-                        {
-                            Evolution.AddNodeMutation(network);
-                        }
-                        rnd = Random.Range(1,101);
-                        if(rnd <= (addConnectionProb*100))
-                        {
-                            //error happens here but i dont know why and whhen
-                            Evolution.AddConnectionMutation(network);
-                        }
-                        rnd = Random.Range(1,101);
-                        if(rnd <= (alterWeightProb*100))
-                        {
-                            Evolution.AlterWeightMutation(network);
-                        }
-                        //EXPERIMENTAL
-                       // listOfBoards[i].GetComponent<Board>().childBrain = network;
-                       networks.Add(network);
-                    }
-                  
-                }
-                else
-                {
+               
+                
                     //calculate adjustedfitness for each snake in each species and sum up the adjusted fitness of each snake per species
                     List<float> adjFitnessesList = new List<float>();
                     for(int i = 0; i < species.Count; i++)
                     {
                         for(int j = 0; j < species[i].Count; j++)
                         {
-                            //todo: species with that component is destroyed somehow
-                         //   Debug.Log(/*species[i][j]*/speciesTest[i][j] + " i: " + i + " j: " + j);
                           sumOfAdjFitnesses +=  AdjustedFitness(species[i][j].GetComponent<Snake>(), species[i]);
-        
                         }
                         adjFitnessesList.Add(sumOfAdjFitnesses);
-                        sumOfAdjFitnesses = 0;
-                        
+                        sumOfAdjFitnesses = 0;   
                     }
                     float divisor = 0.0f;
                     
@@ -409,136 +320,212 @@ public class GameManager : MonoBehaviour
                     for(int i = 0; i < adjFitnessesList.Count; i++)
                     {
                         offspringStake.Add((float)adjFitnessesList[i]/divisor);
-//                        print("offspringstake: "+adjFitnessesList[i] + " / " + divisor);
                     }
                     //if all adjusted fitnesses of a species are 0, we assign 1 to the offspringstake since othherwise the species wont reproduce
                     //this could be desirable, but especially when starting the game and having only 1 species, we need to ensure them to reproduce
-                    for(int i = 0; i < offspringStake.Count; i++)
+                    //adjustment to above:
+                    //case 1: if we only have 1 species and the sum of adjusted fitnesses is 0, below applies
+                    //case 2: if we have multiple species and every species has a sum of adjusted fitnesses of 0, below applies for one species
+                    bool allZero = false;
+                    if(offspringStake.Count == 1 && offspringStake[0] == 0)
                     {
-                        if(offspringStake[i] == 0)
-                        {
-                            offspringStake[i] = 1;
-                        }
+                        offspringStake[0] = 1;
                     }
+                    else
+                    {
+                        for (int i = 0; i < offspringStake.Count; i++)
+                        {
+                            if (offspringStake[i] == 0)
+                            {
+                                allZero = true;
+                            }
+                            else
+                            {
+                                allZero = false;
+                                break;
+                            }
+                        }
+                        //random species will be able to reproduce
+                        if(allZero)
+                        {
+                            int rnd = Random.Range(0, offspringStake.Count);
+                            offspringStake[rnd] = 1;
+                        }
+
+                    }
+
+                    
+        
                     //turning the percentages into integers, i.e. actual number of offspring
-                    List<int> offspringNum = new List<int>();
-                    int tracker = 0;
-                    for(int i = 0; i < offspringStake.Count; i++)
-                    {
-                        
-                       // print(offspringStake[i] + " * " + numOfBoards + " ceil:  " + Mathf.Ceil(offspringStake[i]*numOfBoards));
-                       
-                        if((tracker +  (int)Mathf.Ceil(offspringStake[i] * numOfBoards))> numOfBoards)
-                        {
-                            //31 > 30
-                            // add numofspecies - tracker
-                         
-                            if(tracker == numOfBoards)
-                            {
-                                offspringNum.Add(1);
-                            }
-                            else
-                            {
-                                offspringNum.Add(numOfBoards - tracker);
-                            }
-                        }
-                        //cases < and == are fine in the nested else
-                        else
-                        {
-                            tracker += (int)Mathf.Ceil(offspringStake[i] * numOfBoards);
-
-                            if ((int)Mathf.Ceil(offspringStake[i] * numOfBoards) > species[i].Count)
-                            {
-                                offspringNum.Add(species[i].Count);
-                            }
-                            else
-                            {
-                                offspringNum.Add((int)Mathf.Ceil(offspringStake[i] * numOfBoards));
-                            }
-                                                  
-                        }
-                    }
-
-              
+                    offspringNum = new List<int>();
+                    offspringNum = OffspringDistribution(offspringStake);
+                    int countSpecies = 0;
+                    //todo:
+                    //imlement the speciestxt code in the first for loop but only if offspringnum[i].count != 0
                     for(int i = 0; i < offspringNum.Count; i++)
                     {
+                        if (offspringNum[i] != 0)
+                        {
+                            countSpecies++;
+                        }
                         for(int j = 0; j < offspringNum[i]; j++)
                         {
+                            Network network =   Evolution.Crossover(Evolution.Selection(species[i]));
 
-                             Network network =   Evolution.Crossover(Evolution.Selection(species[i]));
-                           
-//                             print(species[0][0].GetComponent<Snake>().brain.genomeConnectionGenes.Count + " " +
- //                            species[0][1].GetComponent<Snake>().brain.genomeConnectionGenes.Count);
+                            int rnd = Random.Range(1,101);
+                            int prob = ((int)Mathf.Ceil(addNodeProb * 100));
 
-                             int rnd = Random.Range(1,101);
-                            if(rnd <= (addNodeProb*100))
+                            if(rnd <= prob)
                             {
+                            print("should enter");
                                 Evolution.AddNodeMutation(network);
                             }
                             rnd = Random.Range(1,101);
-                            if(rnd <= (addConnectionProb*100))
+                            prob = ((int)Mathf.Ceil(addConnectionProb * 100));
+                            if (rnd <= prob)
                             {
-                                //error happens here but i dont know why and whhen
                                 Evolution.AddConnectionMutation(network);
                             }
                             rnd = Random.Range(1,101);
-                            if(rnd <= (alterWeightProb*100))
+                            prob = ((int)Mathf.Ceil(alterWeightProb * 100));
+                            if (rnd <= prob)
                             {
                                 Evolution.AlterWeightMutation(network);
                             }
-                            //EXPERIMENTAL
-                            //listOfBoards[i].GetComponent<Board>().childBrain = network;
+
                             networks.Add(network);
                         }
                     }
+                    speciesTxt.text = "Species: " + countSpecies;
 
-                }
-                    
+                
 
+                //potential problem:
+                //the species list we have and the number of snakes in each species will not be alligned with the actual offspring in the end
+                //after offspring has been created, we possibly need to update the species list hhere with the correct quantity of snakes in
+                //each species
+
+                
                 List<int> speciesNums = new List<int>();
+                
+                for(int i = 0; i < offspringNum.Count; i++)
+                {
+                    for(int j = 0; j < offspringNum[i]; j++)
+                    {
+                        speciesNums.Add(i + 1);
+                    }
+                   // speciesNums.Add(listOfBoards[i].GetComponent<Board>().species);
+                }
+
+                //todo:
+                //when former parents(boards) have been used to speciate the new generation and hece, there are double thhe amount of
+                //boards that should be there, i can delete half the boards, i.e. the former generation
+                /*
+                    if(listOfBoards.Count != 0)
+                    {
+                        if(inactiveBoards.Count != 0)
+                        {
+                            while(inactiveBoards.Count > 0)
+                            {
+                                Destroy(inactiveBoards[0]);
+                                inactiveBoards.RemoveAt(0);
+                            }
+                        }
+
+                        for(int i = 0; i < listOfBoards.Count; i++)
+                        {
+                            listOfBoards[i].SetActive(false);
+                            inactiveBoards.Add(listOfBoards[i]);
+                            print("Species: "+inactiveBoards[i].GetComponent<Board>().species);
+
+                        }
+                        listOfBoards = new List<GameObject>();
+
+                    }
+
+                    */
+                while(inactiveBoards.Count > 0)
+                {
+                    Destroy(inactiveBoards[0]);
+                    inactiveBoards.RemoveAt(0);
+                }
+                inactiveBoards = new List<GameObject>();
                 for(int i = 0; i < listOfBoards.Count; i++)
                 {
-                    speciesNums.Add(listOfBoards[i].GetComponent<Board>().species);
-                }
-
-               //todo:
-               //when former parents(boards) have been used to speciate the new generation and hece, there are double thhe amount of
-               //boards that should be there, i can delete half the boards, i.e. the former generation
-
-                if(listOfBoards.Count != 0)
-                {
-                    if(inactiveBoards.Count != 0)
-                    {
-                    while(inactiveBoards.Count > 0)
-                    {
-                        Destroy(inactiveBoards[0]);
-                        inactiveBoards.RemoveAt(0);
-                    }
-                    }
-                    
-                    for(int i = 0; i < listOfBoards.Count; i++)
-                    {
-                        listOfBoards[i].SetActive(false);
-                        inactiveBoards.Add(listOfBoards[i]);
-
-                    }
-                    listOfBoards = new List<GameObject>();
-                    
+                    inactiveBoards.Add(listOfBoards[i]);
+                    inactiveBoards[i].SetActive(false);
                 }
        
-            
+
+
+
+                listOfBoards = new List<GameObject>();
+                //todo;
+                //problem right now is that the inactive boards species indicator is not displaying the correct number thhat can be seen in the scene
+                //probably the cause:
+                //to apply the species number the board i.e. the snake bbelongs to, i use the list snakes.
+                //snakes hholds listofboards[x].getcomponent<board>().snakeinstance
+                //important: the board holds the species value, so i should use listofboards[x].getcomponent<bboard>().species, bbut instead
+                //i use snakes[x].getcomponent<snake>().species which is in long:
+                //listofboards[x].getcomponent<board>().snnakeinstance.getcomponent<snake>().boardscript.species
+                //thhis should work as i understand it, bbut is nevertheless an unneccessary long reference
+
                 SpawnBoards();
                 NetworkManager.instance.listOfNetworks = null;
                 NetworkManager.instance.listOfNetworks = new List<Network>();
 
-//            print(networks.Count);
+
                 for (int i = 0; i < listOfBoards.Count; i++)
                 {
-                   // listOfBoards[i].GetComponent<Board>().species = speciesNums[i];
-                   listOfBoards[i].GetComponent<Board>().species = snakes[i].GetComponent<Snake>().boardScript.species;
-                    listOfBoards[i].GetComponent<Board>().childBrain = networks[i];
                     
+                        listOfBoards[i].GetComponent<Board>().species = speciesNums[i];
+                        listOfBoards[i].GetComponent<Board>().childBrain = networks[i];
+                          
                 }
+
+               
+
+
+
+                //EXPERIMENTAL
+/*
+                species = new List<List<GameObject>>();
+                for(int i = 0; i < inactiveBoards.Count; i++)
+                {
+                    if(species.Count == 0)
+                    {
+                        species.Add(new List<GameObject>());
+                        species[0].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                    }
+                    else if(species.Count > 0)
+                    {
+                        bool addSpecies = false;
+                        for(int j = 0; j < species.Count; j++)
+                        {
+                            if (species[j][0].GetComponent<Snake>().boardScript.species !=
+                                inactiveBoards[i].GetComponent<Board>().species)
+                            {
+                                addSpecies = true;
+                            }
+                            else
+                            {
+                                addSpecies = false;
+                                species[j].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                                break;
+                            }
+                        }
+                        if(addSpecies)
+                        {
+                            species.Add(new List<GameObject>());
+                            species[species.Count - 1].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                        }
+                    }
+                   
+                }
+               */
+
+
+
 
             }
           
@@ -574,9 +561,11 @@ public class GameManager : MonoBehaviour
                ++boardNumber;
                 boardGameObjectLoc = new Vector2((j*Board.boarderSizeX) + (j*30), (i*Board.boarderSizeX)+ (i*15));
                 listOfBoards.Add(Instantiate(board, boardGameObjectLoc, Quaternion.identity));
-                
-                listOfBoards[i*boardsPerRow+j].transform.parent = this.gameObject.transform;
-                listOfBoards[i*boardsPerRow+j].name = "Board";
+
+                    //listOfBoards[i*boardsPerRow+j].transform.parent = this.gameObject.transform;
+                    //listOfBoards[i*boardsPerRow+j].name = "Board";
+                    listOfBoards[listOfBoards.Count-1].transform.parent = this.gameObject.transform;
+                    listOfBoards[listOfBoards.Count - 1].name = "Board";
                 }
             }
         }
@@ -584,9 +573,98 @@ public class GameManager : MonoBehaviour
     
 
     float AdjustedFitness(Snake snake, List<GameObject> speciesPop)
-    {
-       
+    {    
         return (float)snake.boardScript.fitness/speciesPop.Count;
+    }
+
+    //huge problem maybe here or elsewhere:
+    //example: i have 2 species and one of them is not allowed to reproduce at all (stake == 0) and therefore, the othher species
+    //will be allowed to reproduce the entire next generation, i still see occurences of getting 2 bboards with species A and 2 boards
+    //with species B
+    List<int> OffspringDistribution(List<float> stake)
+    {
+        List<float> floatDist = new List<float>();
+        List<int> offspringDist = new List<int>();
+        float excess = 0.0f;
+
+        for(int i = 0; i < stake.Count; i++)
+        {
+            floatDist.Add(stake[i]*numOfBoards);
+        }
+
+        if(floatDist.Count > 1)
+        {
+            for (int i = 0; i < floatDist.Count - 1; i++)
+            {
+                int rawNumber = Mathf.FloorToInt(floatDist[i]);
+                if (floatDist[i] == 0)
+                {
+                    excess = 0;
+                }
+                else if(rawNumber == 0)
+                {
+                    excess = floatDist[i];
+                }
+                else
+                {
+                    excess = floatDist[i] % rawNumber;
+                }
+               
+
+                if (excess >= 0.5f)
+                {
+                    offspringDist.Add(Mathf.CeilToInt(floatDist[i]));
+                    excess = 1f - excess;
+                    if (floatDist[i+1] - excess < 0)
+                    {
+                        floatDist[i + 1] = 0;
+                    }
+                    else
+                    {
+                        floatDist[i + 1] -= excess;
+                    }
+                    
+                }
+                else
+                {
+                    offspringDist.Add(Mathf.FloorToInt(floatDist[i]));
+                    floatDist[i + 1] += excess;
+                }
+            }
+            //this portion deals with the last element in floatdist
+            int rawNumber2 = Mathf.FloorToInt(floatDist[floatDist.Count - 1]);
+            if(rawNumber2 == 0)
+            {
+                excess = floatDist[floatDist.Count - 1];
+            }
+            else
+            {
+                excess = floatDist[floatDist.Count - 1] % rawNumber2;
+            }
+            
+            if(excess >= 0.5f)
+            {
+                offspringDist.Add(Mathf.CeilToInt(floatDist[floatDist.Count - 1]));
+            }
+            else
+            {
+                offspringDist.Add(Mathf.FloorToInt(floatDist[floatDist.Count - 1]));
+                //current problem with thjis:
+                //if floatdist[x] is something like 0.99999 it should be a 1, but we round down and it becomes 0
+
+            }
+          
+
+        }
+        //should only be the case for a floatdist[0] of 30
+        else
+        {
+            offspringDist.Add((int)floatDist[0]);
+        }
+       
+
+        return offspringDist;
+
     }
  
 

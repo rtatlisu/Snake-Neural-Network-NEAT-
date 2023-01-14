@@ -41,6 +41,7 @@ public static class Evolution
         }
         else
         {
+            //sometimes gives an argument out of range exception
             sumOfFitness = snakes[0].GetComponent<Snake>().boardScript.fitness;
         }
         List<GameObject> orderedFitness = new List<GameObject>();
@@ -434,8 +435,10 @@ public static class Evolution
 
     public static Network AddNodeMutation(Network network)
     {
+        Debug.Log("shhould work");
         if(network.genomeConnectionGenes.Count != 0)
         {
+            Debug.Log("works");
             int rnd2 = Random.Range(0,network.genomeConnectionGenes.Count);
             
             //disable existing connection
@@ -532,7 +535,8 @@ public static class Evolution
         {
             //alter weight by -0.1 - 0.1
             int randomConnection = Random.Range(0, network.genomeConnectionGenes.Count);
-            float weightChange = (float)System.Math.Round(Random.Range(-0.1f,0.1f),2);
+            //float weightChange = (float)System.Math.Round(Random.Range(-0.1f,0.1f),2);
+            float weightChange = (float)System.Math.Round(Random.Range(-GameManager.instance.mutationPower, GameManager.instance.mutationPower), 2);
             network.genomeConnectionGenes[randomConnection].SetWeight(network.genomeConnectionGenes[randomConnection]
             .GetWeight()+weightChange);
         }

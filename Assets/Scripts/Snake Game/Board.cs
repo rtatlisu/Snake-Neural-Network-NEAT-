@@ -326,8 +326,11 @@ public class Board : MonoBehaviour
 
     public void CalcFitness()
     {
-        fitness = (int) (((fruitsEaten*5) + distTravelled) - ((1/(2+fruitsEaten/distTravelled))*
-        ((fruitsEaten*5) + distTravelled)));
+        /*fitness = (int) (((fruitsEaten*5) + distTravelled) - ((1/(2+fruitsEaten/distTravelled))*
+         ((fruitsEaten*5) + distTravelled)));
+        */
+        fitness = (int)(((fruitsEaten * 15) + distTravelled) - ((1 / (2 + fruitsEaten / distTravelled)) *
+         ((fruitsEaten * 15) + distTravelled)));
     }
 
 
@@ -393,13 +396,13 @@ public class Board : MonoBehaviour
         {
             if(nnvScript.vConnections[i].GetComponent<vConnection>().enabled)
             {
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.white;
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.white;
+                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.cyan;
+                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.cyan;
             }
             else
             {
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.gray;
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.gray;
+                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.red;
+                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.red;
             }
         }
     }

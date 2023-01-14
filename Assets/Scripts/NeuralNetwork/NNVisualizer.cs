@@ -194,13 +194,13 @@ public class NNVisualizer : MonoBehaviour
              lr.material = new Material(Shader.Find("Sprites/Default"));
              if(enabled)
              {
-                lr.startColor = Color.white;
-                lr.endColor = Color.white;
+                lr.startColor = Color.cyan;
+                lr.endColor = Color.cyan;
              }
              else
              {
-                lr.startColor = Color.gray;
-                lr.endColor = Color.gray;
+                lr.startColor = Color.red;
+                lr.endColor = Color.red;
              }
              
              lr.startWidth = 0.1f;

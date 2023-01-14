@@ -113,7 +113,8 @@ public class Network
                 layers[0][j + i*3].value = Normalize(1,18,list[i].wallDist);
                 layers[0][j+1 + i*3].state = list[i].tail;
                 layers[0][j+2 + i*3].state = list[i].food;
-           
+
+
             }
         }
         FeedForward();
@@ -130,7 +131,10 @@ public class Network
       
         node = new Node(value, type, this.currentNumOfNodes, layer);
         genomeNodeGenes.Add(node);
-        layers[layer].Add(node);
+       
+//        Debug.Log(layers.Count + " " + layer);
+        
+        layers[layer].Add(node); //thhat threw an error somehow
         this.currentNumOfNodes+=1;
     }
 
