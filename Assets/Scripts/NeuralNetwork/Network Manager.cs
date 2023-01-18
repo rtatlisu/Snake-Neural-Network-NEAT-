@@ -35,13 +35,13 @@ public class NetworkManager
         for(int i = 0; i < GameManager.instance.storedConnections.Count; i++)
         {
             
-                if(In.nodeNumber == GameManager.instance.storedConnections[i].GetIn().nodeNumber &&
-                Out.nodeNumber == GameManager.instance.storedConnections[i].GetOut().nodeNumber)
-                {
-                    innoNumber = GameManager.instance.storedConnections[i].GetInnovationnumber();
-                    connectionExists = true;
-                    break;
-                }
+            if(In.nodeNumber == GameManager.instance.storedConnections[i].GetIn().nodeNumber &&
+            Out.nodeNumber == GameManager.instance.storedConnections[i].GetOut().nodeNumber)
+            {
+                innoNumber = GameManager.instance.storedConnections[i].GetInnovationnumber();
+                connectionExists = true;
+                break;
+            }
             
             
         }
@@ -153,7 +153,7 @@ public class NetworkManager
         }
 */
         float temp = (c1*excessOrDisjoint.Count) + (c2*avgWeightDistance);
-            Debug.Log(excessOrDisjoint.Count + " + " + avgWeightDistance );
+//            Debug.Log(excessOrDisjoint.Count + " + " + avgWeightDistance );
             if(float.IsNaN(temp)) temp = 0;
             return temp;        
         

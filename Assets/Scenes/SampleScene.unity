@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 433e97cd9358e49189cbcdac6314b7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfBoards: 30
+  numOfBoards: 2
   board: {fileID: 5325111345271286513, guid: 6ab7f9ee532644c029fa4cbd7a5400eb, type: 3}
   listOfBoards: []
   boardsPerRow: 6
@@ -379,10 +379,15 @@ MonoBehaviour:
   gameSpeed: 0.01
   POPULATIONSIZE: 30
   numOfSpecies: 1
-  addNodeProb: 0.01
-  addConnectionProb: 0.02
-  alterWeightProb: 0.5
+  addNodeProb: 0.13
+  addConnectionProb: 0.15
+  alterWeightProb: 0.8
   gen: 1
+  compat_threshhold: 3
+  num_species_target: 1
+  mutationPower: 2.5
+  geneReenableProb: 0
+  multipleStructuralMutations: 0
   boardNumber: 0
 --- !u!4 &1451708316
 Transform:

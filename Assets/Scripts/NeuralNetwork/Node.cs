@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node 
+public class Node
 {
     public float value = -99;
     public string type; //input, output, hidden

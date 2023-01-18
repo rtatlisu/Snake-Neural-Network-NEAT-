@@ -120,19 +120,32 @@ public class Network
         FeedForward();
         DetermineOutput();
     }
-    
+
 
     public void AddNode(int value, string type, int layer)
     {
-        if(layer == layers.Count-1 && type.Equals("Hidden"))
+        if (layer > layers.Count - 1)
         {
-            AddLayer(layers.Count-1);
+            Debug.Log("lol");
+        }
+/*
+        if (layer == layers.Count - 1 && type.Equals("Hidden"))
+        {
+            AddLayer(layers.Count - 1);
+        }
+*/
+        while (layer >= layers.Count - 1 && type.Equals("Hidden"))
+        {
+            AddLayer(layers.Count - 1);
         }
       
         node = new Node(value, type, this.currentNumOfNodes, layer);
         genomeNodeGenes.Add(node);
+       if(layer >= layers.Count)
+        {
+            Debug.Log(layers.Count + " " + layer);
+        }
        
-//        Debug.Log(layers.Count + " " + layer);
         
         layers[layer].Add(node); //thhat threw an error somehow
         this.currentNumOfNodes+=1;
@@ -140,6 +153,7 @@ public class Network
 
      public void AddNode(bool state, string type, int layer)
     {
+        
         if(layer == layers.Count-1 && type.Equals("Hidden"))
         {
             AddLayer(layers.Count-1);
@@ -162,8 +176,10 @@ public class Network
             for(int j = 0; j < layers[i].Count; j++)
             {
                 layers[i][j].layer+=1;
+
             }
          }
+
     }
 
 
@@ -351,23 +367,23 @@ public class Synapse
         this.innovationNumber = innovationNumber;
     }
 
-/*
-    public void SetIn(int value)
+
+    public void SetIn(Node node)
     {
-        In = value;
+        In = node;
     }
-*/
+
     public Node GetIn()
     {
         return In;
     } 
 
-/*
-    public void SetOut(int value)
+
+    public void SetOut(Node node)
     {
-        Out = value;
+        Out = node;
     }
-*/
+
     public Node GetOut()
     {
         return Out;

@@ -7,7 +7,7 @@ public class NNVisualizer : MonoBehaviour
 {
     Board boardScript;
     public GameObject node;
-    GameObject instantiateNode;
+    public GameObject instantiateNode;
     int numOfNodes = 0;
     bool createNode;
     public List<List<GameObject>> layers;
@@ -46,10 +46,17 @@ public class NNVisualizer : MonoBehaviour
     
 
     public void vAddNode(int whichLayer, string type, Vector2 node1Pos, Vector2 node2Pos)
-    {
+    {/*
         if(layers.Count-1 < whichLayer)
         {
             
+            AddjustLayers(whichLayer);
+        }
+       */
+       //EXPERIMENTAL
+       
+        while(whichLayer > layers.Count-1)
+        {
             AddjustLayers(whichLayer);
         }
       
@@ -60,6 +67,7 @@ public class NNVisualizer : MonoBehaviour
             instantiateNode = GameObject.Instantiate(node, transform.position + 
             new Vector3(whichLayer*5,-layers[whichLayer].Count*2,0), Quaternion.identity);
             instantiateNode.transform.parent = gameObject.transform;
+            instantiateNode.name = "Node";          
             layers[whichLayer].Add(instantiateNode);
             numOfNodes++;
             if(numOfNodes == 12)
@@ -120,6 +128,7 @@ public class NNVisualizer : MonoBehaviour
             new Vector3(whichLayer*5,centerPosY,0), Quaternion.identity);
 
             instantiateNode.transform.parent = gameObject.transform;
+            instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
             numOfNodes++;
 
@@ -168,6 +177,7 @@ public class NNVisualizer : MonoBehaviour
             new Vector3(whichLayer*5,centerPosY,0), Quaternion.identity);
 
             instantiateNode.transform.parent = gameObject.transform;
+            instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
             numOfNodes++;
             //probably not working as of now
@@ -220,6 +230,10 @@ public class NNVisualizer : MonoBehaviour
         }
         else
         {
+            while(insertIndex > layers.Count)
+            {
+                layers.Add(new List<GameObject>());
+            }
             layers.Insert(insertIndex, new List<GameObject>());
             for(int i = insertIndex+1; i < layers.Count; i++)
             {

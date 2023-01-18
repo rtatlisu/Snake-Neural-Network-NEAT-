@@ -40,8 +40,11 @@ public class GameManager : MonoBehaviour
 
     public float compat_threshhold = 3.0f;
     float compat_modifier = 0.3f;
-    int num_species_target = 5;
+    public int num_species_target = 3;
     public float mutationPower = 2.5f;
+    public float geneReenableProb = 0f;
+    public bool multipleStructuralMutations = false;
+
 
     float sumOfAdjFitnesses = 0.0f;
     List<GameObject> snakes;
@@ -162,8 +165,9 @@ public class GameManager : MonoBehaviour
                 //the referencing at the end is useless for these lists, but prevents indexoutofbounds exceptions
                 //after implementing the strategy, we no longer need the bool list "parentsRemoved"
 
-                //SPECIATION
-                List<bool> parentsRemoved = new List<bool>();
+
+
+                //SPECIATION         
                 List<List<GameObject>> childSpecies = new List<List<GameObject>>();
 
            
@@ -190,15 +194,16 @@ public class GameManager : MonoBehaviour
                         {
                             //comp. threshhold = 3
                             //if >= 3, snake doesnt fit in the compared species
+                            int rnd = Random.Range(0, species[j].Count);
                             if(NetworkManager.instance.CompatabilityDistance(snakes[i].GetComponent<Snake>().brain.genomeConnectionGenes,
-                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
+                            species[j][rnd].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
                             {
                                 createSpecies = true;                            
                             }
                             else
                             {
                                 createSpecies = false;
-                                int temp = species[j][0].GetComponent<Snake>().boardScript.species;
+                                int temp = species[j][rnd].GetComponent<Snake>().boardScript.species;
                                 species[j].Add(snakes[i]);
                                //  snakes[i].GetComponent<Snake>().boardScript.species = temp;
                                // listOfBoards[i].GetComponent<Board>().species = temp;
@@ -212,8 +217,7 @@ public class GameManager : MonoBehaviour
                             species.Add(new List<GameObject>());                       
                             species[species.Count-1].Add(snakes[i]);
                             // snakes[i].GetComponent<Snake>().boardScript.species = /*speciesNum*/species.Count;
-                           // listOfBoards[i].GetComponent<Board>().species = species.Count;
-                            parentsRemoved.Add(true);     
+                           // listOfBoards[i].GetComponent<Board>().species = species.Count;   
                         }
                     }
                     //prolem:
@@ -233,20 +237,18 @@ public class GameManager : MonoBehaviour
                             //problem:
                             //we seem to have a higher species count than actual species in the parental generation before
                             //assigning the now children to thhe species list
-                            //                    print(species.Count + " " + j + " " + snakes.Count + " " + i);
-                            //                    print("A: " + snakes[i].GetComponent<Snake>().boardScript.boardNumber + " B: " +
-                            //                    species[j][0].GetComponent<Snake>().boardScript.boardNumber);
-                            print(species.Count + " " + j + " " + species[j].Count);
-                            
-                            if(NetworkManager.instance.CompatabilityDistance(snakes[i].GetComponent<Snake>().brain.genomeConnectionGenes,
-                            species[j][0].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
+
+                            //print(species.Count + " " + j + " " + species[j].Count);
+                            int rnd = Random.Range(0, species[j].Count);
+                            if (NetworkManager.instance.CompatabilityDistance(snakes[i].GetComponent<Snake>().brain.genomeConnectionGenes,
+                            species[j][rnd].GetComponent<Snake>().brain.genomeConnectionGenes) >= compat_threshhold)
                             {
                                 createSpecies = true;
                             }
                             else
                             {
                                 createSpecies = false;
-                                int temp = species[j][0].GetComponent<Snake>().boardScript.species;
+                                int temp = species[j][rnd].GetComponent<Snake>().boardScript.species;
                                 childSpecies[j].Add(snakes[i]);
                                 // snakes[i].GetComponent<Snake>().boardScript.species = temp;
                                 //listOfBoards[i].GetComponent<Board>().species = temp;
@@ -271,12 +273,18 @@ public class GameManager : MonoBehaviour
                 //this loop solves the case of having more species in the parental generation than in thhe upcoming generation
                 //having fewer species in the new generation means we have empty species in the childspecies list whichh shouldnt
                 //be passed to the parent
-                for(int i = 0; i < childSpecies.Count; i++)
+              
+                int it = 0;
+                while (it < childSpecies.Count)
                 {
-                    if (childSpecies[i].Count == 0)
+                    if (childSpecies[it].Count == 0)
                     {
-                        childSpecies.RemoveAt(i);
-                        i = 0;
+                        childSpecies.RemoveAt(it);
+                        it = 0;
+                    }
+                    else
+                    {
+                        it++;
                     }
                 }
 
@@ -372,25 +380,64 @@ public class GameManager : MonoBehaviour
                         {
                             Network network =   Evolution.Crossover(Evolution.Selection(species[i]));
 
-                            int rnd = Random.Range(1,101);
-                            int prob = ((int)Mathf.Ceil(addNodeProb * 100));
+                            //EXPERIMENTAL
+                            //the for loops are experimental and give each node/connection of a network the chance to mutate instead of only
+                            //having the chance of mutating 3 times at max (weight, add node, add connection)
+                            int rnd;
+                            int prob = (int)Mathf.Ceil(addNodeProb * 100);
+                            if (multipleStructuralMutations)
+                            {
+                                for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                                {
+                                    rnd = Random.Range(1, 101);
+                                    if (rnd <= prob)
+                                    {
+                                        Evolution.AddNodeMutation(network);
+                                    }
+                                }
 
-                            if(rnd <= prob)
-                            {
-                            print("should enter");
-                                Evolution.AddNodeMutation(network);
+                                prob = (int)Mathf.Ceil(addConnectionProb * 100);
+                                for (int x = 0; x < network.genomeNodeGenes.Count - 4; x++) //-4 because i exclude the output nodes
+                                {
+                                    rnd = Random.Range(1, 101);
+                                    if (rnd <= prob)
+                                    {
+                                        Evolution.AddConnectionMutation(network);
+                                    }
+                                }
+
+                                prob = (int)Mathf.Ceil(alterWeightProb * 100);
+                                for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                                {
+                                    rnd = Random.Range(1, 101);
+                                    if (rnd <= prob)
+                                    {
+                                        Evolution.AlterWeightMutation(network);
+                                    }
+                                }
                             }
-                            rnd = Random.Range(1,101);
-                            prob = ((int)Mathf.Ceil(addConnectionProb * 100));
-                            if (rnd <= prob)
+                            else
                             {
-                                Evolution.AddConnectionMutation(network);
-                            }
-                            rnd = Random.Range(1,101);
-                            prob = ((int)Mathf.Ceil(alterWeightProb * 100));
-                            if (rnd <= prob)
-                            {
-                                Evolution.AlterWeightMutation(network);
+                                rnd = Random.Range(1, 101);
+                                if (rnd <= prob)
+                                {
+                                    Evolution.AddNodeMutation(network);
+                                }
+
+                                prob = (int)Mathf.Ceil(addConnectionProb * 100);
+                                rnd = Random.Range(1, 101);
+                                if (rnd <= prob)
+                                {
+                                    Evolution.AddConnectionMutation(network);
+                                }
+
+                                prob = (int)Mathf.Ceil(alterWeightProb * 100);
+                                rnd = Random.Range(1, 101);
+                                if (rnd <= prob)
+                                {
+                                    Evolution.AlterWeightMutation(network);
+                                }
+
                             }
 
                             networks.Add(network);
@@ -483,46 +530,51 @@ public class GameManager : MonoBehaviour
                           
                 }
 
-               
+
 
 
 
                 //EXPERIMENTAL
-/*
+               /*
+                    
                 species = new List<List<GameObject>>();
-                for(int i = 0; i < inactiveBoards.Count; i++)
+                for (int i = 0; i < listOfBoards.Count; i++)
                 {
-                    if(species.Count == 0)
+                    if (species.Count == 0)
                     {
                         species.Add(new List<GameObject>());
-                        species[0].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                        species[0].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
                     }
-                    else if(species.Count > 0)
+                    else if (species.Count > 0)
                     {
                         bool addSpecies = false;
-                        for(int j = 0; j < species.Count; j++)
+                        for (int j = 0; j < species.Count; j++)
                         {
                             if (species[j][0].GetComponent<Snake>().boardScript.species !=
-                                inactiveBoards[i].GetComponent<Board>().species)
+                                listOfBoards[i].GetComponent<Board>().species)
                             {
                                 addSpecies = true;
                             }
                             else
                             {
                                 addSpecies = false;
-                                species[j].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                                species[j].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
                                 break;
                             }
                         }
-                        if(addSpecies)
+                        if (addSpecies)
                         {
                             species.Add(new List<GameObject>());
-                            species[species.Count - 1].Add(inactiveBoards[i].GetComponent<Board>().snakeInstance);
+                            species[species.Count - 1].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
                         }
                     }
-                   
+
                 }
-               */
+                      
+               */ 
+                
+
+               
 
 
 

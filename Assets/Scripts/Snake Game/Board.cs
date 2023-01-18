@@ -125,6 +125,12 @@ public class Board : MonoBehaviour
         distanceRef.text = "Distance: " + distTravelled;
         movesLeftRef.text = "Moves left: " + movesLeft;
 
+        if(movesLeft <= 0)
+        {
+            gameRunning = false;
+            gameOver = true;
+        }
+
       
         if (snakeScript == null)
         {
@@ -150,29 +156,49 @@ public class Board : MonoBehaviour
                 for(int i = 0; i < snakeScript.brain.layers[0].Count; i++)
                 {
                     nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                        snakeScript.brain.layers[0][i].layer, "Input" ,Vector2.zero, Vector2.zero);
-                }
+                        /*snakeScript.brain.layers[0][i].layer*/0, "Input" ,Vector2.zero, Vector2.zero);
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[0][i].state;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[0][i].value;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[0][i].type;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[0][i].nodeNumber;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[0][i].layer;
+            }
                 //Hidden
                 if(snakeScript.brain.layers.Count > 2)
                 {
+                    //-2 excludes input and output layer
                     for(int i = 0; i < snakeScript.brain.layers.Count - 2; i++)
                     {
+                    //i = 0; i < 8 - 2 = 6
+                    //j = 0; j < layer[1].count = 3
+                    //layer[1][0].layer...layer[1][2]
+                        //i+1 -> starting at the first hidden layer 
                         for(int j = 0; j < snakeScript.brain.layers[i+1].Count; j++)
                         {
                             nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                            snakeScript.brain.layers[i+1][j].layer, "Hidden" ,Vector2.zero, Vector2.zero);
-                            //[1][x] -> [0,hidden1,2]
-                            //[2][x] -> [0,hidden1,hidden2,2]
-                        }
+                           /* snakeScript.brain.layers[i+1][j].layer*/(i+1), "Hidden" ,Vector2.zero, Vector2.zero);
+                        nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[i + 1][j].state;
+                        nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[i + 1][j].value;
+                        nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[i + 1][j].type;
+                        nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[i + 1][j].nodeNumber;
+                        nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[i + 1][j].layer;
+                        //[1][x] -> [0,hidden1,2]
+                        //[2][x] -> [0,hidden1,hidden2,2]
+                    }
                     }
                 }
                 //output
                 for(int i = 0; i < snakeScript.brain.layers[snakeScript.brain.layers.Count-1].Count; i++)
                 {
+//                Debug.Log("thiys could bug: "+snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].layer);
                     nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                        snakeScript.brain.layers[snakeScript.brain.layers.Count-1][i].layer, "Output"
-                        ,Vector2.zero, Vector2.zero);
-                }
+                       /* snakeScript.brain.layers[snakeScript.brain.layers.Count-1][i].layer*/(snakeScript.brain.layers.Count - 1), "Output",Vector2.zero, Vector2.zero);
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].state;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].value;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].type;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].nodeNumber;
+                nnvInstance.GetComponent<NNVisualizer>().instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].layer;
+            }
 
 
             //when drawing the net, the net already exists.
