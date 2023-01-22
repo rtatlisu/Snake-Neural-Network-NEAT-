@@ -26,7 +26,7 @@ public class NNVisualizer : MonoBehaviour
         transform.position = transform.parent.position + new Vector3(Board.boarderSizeX-1,Board.boarderSizeX-1,0)
         + Vector3.right*2;
         layers = new List<List<GameObject>>();
-        layers.Add(new List<GameObject>());
+       // layers.Add(new List<GameObject>());
         vConnections = new List<GameObject>();
         
         
@@ -45,7 +45,7 @@ public class NNVisualizer : MonoBehaviour
     }
     
 
-    public void vAddNode(int whichLayer, string type, Vector2 node1Pos, Vector2 node2Pos)
+    public void vAddNode(int whichLayer, int layerIndex, string type, Vector2 node1Pos, Vector2 node2Pos)
     {/*
         if(layers.Count-1 < whichLayer)
         {
@@ -53,22 +53,46 @@ public class NNVisualizer : MonoBehaviour
             AddjustLayers(whichLayer);
         }
        */
-       //EXPERIMENTAL
-       
-        while(whichLayer > layers.Count-1)
-        {
-            AddjustLayers(whichLayer);
-        }
-      
+        //EXPERIMENTAL
 
-        if(type.Equals("Input"))
+           while(whichLayer > layers.Count-1)
+           {
+            layers.Add(new List<GameObject>());
+           }
+
+        //AddjustLayers(whichLayer);
+
+        //0 1
+        //whichlayer = 2
+        //2 > 2-1
+        //0 1 2
+        //adjustlayers(2)
+        //i = 2+1, i < la<ers.count=3
+
+        //todo:
+        //fix visuals
+        //note: as vAddNode starts, the structual layers shhould already have the output layer be the last layer
+        //gotta work on the case of adding a new layer in regard to if it makes sense to add the layer to the end or somewhere inbetween
+        //board creates the nodes/layers in the order of input,hidden,output
+
+        //hidden nodes and layers are added from left to right, so no insert operation is needed and since we always redraw thhe entire network,
+        //we will never need to insert a list somewhere other than the end
+
+        //ontop of that, this means, that we wont even need the addjustlayersmethod
+       
+
+        
+        
+
+        if (type.Equals("Input"))
         {
             
             instantiateNode = GameObject.Instantiate(node, transform.position + 
-            new Vector3(whichLayer*5,-layers[whichLayer].Count*2,0), Quaternion.identity);
+            new Vector3(whichLayer*5,-layers[whichLayer].Count*2/*-layerIndex*2*/,0), Quaternion.identity);
             instantiateNode.transform.parent = gameObject.transform;
-            instantiateNode.name = "Node";          
+            instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
+            //layers[whichLayer][layerIndex] = instantiateNode;
             numOfNodes++;
             if(numOfNodes == 12)
             {
@@ -95,17 +119,22 @@ public class NNVisualizer : MonoBehaviour
         {
             //if an output node exist -> move all existing nodes up by 1
             //layers.count-1 could be replaced by whichLayer
-            if(layers[layers.Count-1].Count != 0)
+            if(layers[whichLayer].Count != 0/*layers[whichLayer][0] != null*/)
             {
-                for(int i = 0; i < layers[layers.Count-1].Count; i++)
-                {
-                    layers[layers.Count-1][i].transform.position += new Vector3(0,1,0);
+                for(int i = 0; i < layers[whichLayer].Count; i++)
+                {/*
+                    if (layers[whichLayer][i] != null)
+                    {
+                        layers[whichLayer][i].transform.position += new Vector3(0, 1, 0);
+                        centerPosY = layers[whichLayer][i].transform.localPosition.y - 2;
+                    }
+                    */
+                    layers[whichLayer][i].transform.position += new Vector3(0,1,0);
                 }
                 //insert the new node at the last nodes position -2;
-                centerPosY = layers[layers.Count-1][layers[layers.Count-1].Count-1].
-                transform.localPosition.y - 2;
+                centerPosY = layers[whichLayer][layers[whichLayer].Count-1].transform.localPosition.y - 2;
             }
-            else if(layers[layers.Count-1].Count == 0)
+            else if(layers[layers.Count-1].Count == 0/*layers[whichLayer][0] == null*/)
             {
                 if(layers[0].Count%2 == 0)
                 {
@@ -130,6 +159,7 @@ public class NNVisualizer : MonoBehaviour
             instantiateNode.transform.parent = gameObject.transform;
             instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
+            //layers[whichLayer][layerIndex] = instantiateNode;
             numOfNodes++;
 
         }
@@ -146,12 +176,17 @@ public class NNVisualizer : MonoBehaviour
             if(layers[whichLayer].Count != 0)
             {
                 for(int i = 0; i < layers[whichLayer].Count; i++)
-                {
-                    layers[whichLayer][i].transform.position += new Vector3(0,1,0);
+                {/*
+                    if (layers[whichLayer][i] != null)
+                    {
+                        layers[whichLayer][i].transform.position += new Vector3(0, 1, 0);
+                        centerPosY = layers[whichLayer][i].transform.localPosition.y - 2;
+                    }
+                    */
+                    layers[whichLayer][i].transform.position += new Vector3(0, 1, 0);
                 }
                 //insert the new node at the last nodes position -2;
-                centerPosY = layers[whichLayer][layers[whichLayer].Count-1].
-                transform.localPosition.y - 2;
+                centerPosY = layers[whichLayer][layers[whichLayer].Count-1].transform.localPosition.y - 2;
             }
             else if(layers[whichLayer].Count == 0)
             {
@@ -179,6 +214,7 @@ public class NNVisualizer : MonoBehaviour
             instantiateNode.transform.parent = gameObject.transform;
             instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
+            //layers[whichLayer][layerIndex] = instantiateNode;
             numOfNodes++;
             //probably not working as of now
         }
@@ -224,12 +260,15 @@ public class NNVisualizer : MonoBehaviour
 
     public void AddjustLayers(int insertIndex)
     {
+        /*
         if(layers.Count == 1)
         {
             layers.Add(new List<GameObject>());
         }
+        
         else
         {
+            //used to be >
             while(insertIndex > layers.Count)
             {
                 layers.Add(new List<GameObject>());
@@ -243,7 +282,20 @@ public class NNVisualizer : MonoBehaviour
                 }
             }
             
-        }    
+        }
+        */
+        
+        
+            layers.Insert(insertIndex, new List<GameObject>());
+            for (int i = insertIndex + 1; i < layers.Count; i++)
+            {
+                for (int j = 0; j < layers[i].Count; j++)
+                {
+                    layers[i][j].transform.localPosition += Vector3.right * 5;
+                }
+            }
+        
+        
     }
 
     

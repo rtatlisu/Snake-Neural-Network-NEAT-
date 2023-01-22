@@ -7,5 +7,6 @@ public class vNode : MonoBehaviour
     public bool state;
     public string type;
     public int layer;
+    public int layerIndex;
 
 }

@@ -8,8 +8,8 @@ public class NetworkManager
     public int numOfInputNodes = 12;
     public int nodeCount;
     public double mutationRate = 0.05;
-    public float minWeight = -2;
-    public float maxWeight = 2;
+    public float minWeight = -10;
+    public float maxWeight = 10;
     public List<Network> listOfNetworks;
     public static int innovationNumber = 1;
     

@@ -9,20 +9,23 @@ public class Node
      public int nodeNumber;
      public bool state;
      public int layer;
-    public Node(int value, string type, int nodeNumber, int layer)
+    public int layerIndex;
+    public Node(int value, string type, int nodeNumber, int layer, int layerIndex)
     {
         this.value = value;
         this.type = type;
         this.nodeNumber = nodeNumber;
         this.layer = layer;
+        this.layerIndex = layerIndex;
     }
 
-    public Node(bool state, string type, int nodeNumber, int layer)
+    public Node(bool state, string type, int nodeNumber, int layer, int layerIndex)
     {
         this.state = state;
         this.type = type;
         this.nodeNumber = nodeNumber;
         this.layer = layer;
+        this.layerIndex = layerIndex;
     }
 
 

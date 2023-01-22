@@ -379,7 +379,7 @@ MonoBehaviour:
   gameSpeed: 0.01
   POPULATIONSIZE: 30
   numOfSpecies: 1
-  addNodeProb: 0.13
+  addNodeProb: 1
   addConnectionProb: 0.15
   alterWeightProb: 0.8
   gen: 1
@@ -388,6 +388,8 @@ MonoBehaviour:
   mutationPower: 2.5
   geneReenableProb: 0
   multipleStructuralMutations: 0
+  randomWeight: 0
+  randomWeightProb: 0.1
   boardNumber: 0
 --- !u!4 &1451708316
 Transform:

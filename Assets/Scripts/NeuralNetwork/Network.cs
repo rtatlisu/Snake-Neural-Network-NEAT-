@@ -139,7 +139,7 @@ public class Network
             AddLayer(layers.Count - 1);
         }
       
-        node = new Node(value, type, this.currentNumOfNodes, layer);
+        node = new Node(value, type, this.currentNumOfNodes, layer, (layers[layer].Count-1));
         genomeNodeGenes.Add(node);
        if(layer >= layers.Count)
         {
@@ -148,6 +148,7 @@ public class Network
        
         
         layers[layer].Add(node); //thhat threw an error somehow
+        node.layerIndex = layers[layer].Count - 1;
         this.currentNumOfNodes+=1;
     }
 
@@ -159,9 +160,10 @@ public class Network
             AddLayer(layers.Count-1);
         }
      
-        node = new Node(state, type, this.currentNumOfNodes, layer);
+        node = new Node(state, type, this.currentNumOfNodes, layer, (layers[layer].Count - 1));
         genomeNodeGenes.Add(node);
         layers[layer].Add(node);
+        node.layerIndex = layers[layer].Count - 1;
         this.currentNumOfNodes+=1;
     }
 
@@ -179,6 +181,24 @@ public class Network
 
             }
          }
+
+    }
+    public void ShiftNode(Node node, int fromLayer, int fromLayerIndex, int toLayer)
+    {
+        if (layers.Count - 1 <= toLayer)
+        {
+            AddLayer(toLayer);
+        }
+
+        layers[toLayer].Add(node);
+        node.layer = toLayer;
+        node.layerIndex = layers[toLayer].Count - 1;
+        layers[fromLayer].RemoveAt(fromLayerIndex);
+        for (int i = 0; i < layers[fromLayer].Count; i++)
+        {
+            layers[fromLayer][i].layerIndex = i;
+        }
+        
 
     }
 

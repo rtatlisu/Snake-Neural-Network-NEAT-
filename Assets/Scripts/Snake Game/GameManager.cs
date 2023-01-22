@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     public float mutationPower = 2.5f;
     public float geneReenableProb = 0f;
     public bool multipleStructuralMutations = false;
+    public bool randomWeight;
+    public float randomWeightProb = 0.1f;
 
 
     float sumOfAdjFitnesses = 0.0f;
@@ -527,6 +529,7 @@ public class GameManager : MonoBehaviour
                     
                         listOfBoards[i].GetComponent<Board>().species = speciesNums[i];
                         listOfBoards[i].GetComponent<Board>().childBrain = networks[i];
+                        listOfBoards[i].GetComponent<Board>().start_drawing_nn = true;
                           
                 }
 

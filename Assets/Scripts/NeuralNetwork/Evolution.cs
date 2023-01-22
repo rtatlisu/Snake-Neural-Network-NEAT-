@@ -177,7 +177,8 @@ public static class Evolution
                     break;
        
                 }
-            }  
+            }
+
             if(matchingFound)
             {
                 int rnd = Random.Range(0,2);
@@ -192,22 +193,26 @@ public static class Evolution
                     float weight = p1Connections[matchingIndexP1].GetWeight();
                     bool enabled = p1Connections[matchingIndexP1].GetEnabled();
 
-                        NetworkManager.instance.CreateSynapse(childBrain,In,Out,weight,enabled);
+                    NetworkManager.instance.CreateSynapse(childBrain,In,Out,weight,enabled);
                 }
                 else
                 {
-                    Node In = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetIn();
-                    Node Out = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetOut();
-                    float weight = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetWeight();
-                    bool enabled = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetEnabled();
-    
+                    // Node In = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetIn();
+                    // Node Out = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetOut();
+                    // float weight = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetWeight();
+                    // bool enabled = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[matchingIndexP2].GetEnabled();
+                    Node In = p2Connections[matchingIndexP2].GetIn();
+                    Node Out = p2Connections[matchingIndexP2].GetOut();
+                    float weight = p2Connections[matchingIndexP2].GetWeight();
+                    bool enabled = p2Connections[matchingIndexP2].GetEnabled();
+
                     NetworkManager.instance.CreateSynapse(childBrain,In,Out,weight,enabled);
                 }
             } 
             else
             {
-                //disjoint/excess genes
-                parent1Genes.Add(parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[i]);
+                    //disjoint/excess genes
+                    parent1Genes.Add(/*parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[i]*/p1Connections[i]);
             }
 
         }
@@ -220,9 +225,9 @@ public static class Evolution
             matchingIndexP2 = -1;
             for(int j = 0; j < parent1Size; j++)
             {
-                //both hhave the gene, 50/50
-                if(parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[i].GetInnovationnumber() ==
-                parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[j].GetInnovationnumber())
+                    //both hhave the gene, 50/50
+                if (p2Connections[i]/*parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[i]*/.GetInnovationnumber() ==
+                    p1Connections[j]/*parents[0].GetComponent<Snake>().brain.genomeConnectionGenes[j]*/.GetInnovationnumber())
                 {
                     matchingFound = true;
                     break;
@@ -237,7 +242,7 @@ public static class Evolution
             //only looking for the excess/disjoint genes
             if(!matchingFound)
             {
-               parent2Genes.Add((parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[i]));
+                parent2Genes.Add(p2Connections[i]/*parents[1].GetComponent<Snake>().brain.genomeConnectionGenes[i]*/);
             }
 
         }
@@ -364,40 +369,93 @@ public static class Evolution
                 else
                 {
                     childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                    
                 }
                 
             }
         }
-        /*
-        int highestLayer = 0;
+
+        //EXPERIMENTAL
+        //now nodes have to be added and inserted into the right layer according to the connection genes the child now has
+        List<Node> insertedNodes = new List<Node>();
         for(int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
         {
-            if (childBrain.genomeConnectionGenes[i].GetIn().layer >= childBrain.genomeConnectionGenes[i].GetOut().layer)
+            bool add = false;
+            if(insertedNodes.Count > 0 && childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden"))
             {
-                if(childBrain.genomeConnectionGenes[i].GetIn().layer > highestLayer)
+                for (int j = 0; j < insertedNodes.Count; j++)
                 {
-                    highestLayer = childBrain.genomeConnectionGenes[i].GetIn().layer;
+                    if (childBrain.genomeConnectionGenes[i].GetOut().nodeNumber == insertedNodes[j].nodeNumber)
+                    {
+                        add = false;
+                        break;
+                    }
+                    else
+                    {
+                        add = true;
+                    }
+                }
+            }
+            else if(childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden"))
+            {
+                add = true;
+            }
+
+            if(add)
+            {    //initially insert all hidden nodes in the first layer, i.e. input ->hidden->output
+                 childBrain.AddNode(0, "Hidden", 1);
+                 insertedNodes.Add(childBrain.genomeNodeGenes[childBrain.genomeNodeGenes.Count - 1]);
+            }
+           
+        }
+        //now we shift the hidden nodes to the righht if a connection between 2 hidden nodes demands thhat
+        bool restart = true;
+        while(restart)
+        {
+            if(childBrain.genomeConnectionGenes.Count > 0)
+            {
+                for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
+                {
+                    //shiftnode needed
+                    if (childBrain.genomeConnectionGenes[i].GetIn().type.Equals("Hidden")
+                        && childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden")
+                        && childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetIn().nodeNumber - 1].layer >=
+                        childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer)
+                    {
+                       // childBrain.ShiftNode(childBrain.genomeConnectionGenes[i].GetOut(), childBrain.genomeConnectionGenes[i].GetOut().layer,
+                           // childBrain.genomeConnectionGenes[i].GetOut().layerIndex, (childBrain.genomeConnectionGenes[i].GetOut().layer + 1));
+                           childBrain.ShiftNode(childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1],
+                               childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer,
+                            childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layerIndex,
+                            childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer+1);
+//todo:
+//need to work with genomenodegenes because genomeconnectiongenes holds the layers from the parents in which
+//the nodes have already been positioned in their layers
+//we need to start off hhere with all hidden nodes in layer 1 though
+                        restart = true;
+                        break;
+                    }
+                    else
+                    {
+                        restart = false;
+                    }
                 }
             }
             else
             {
-                if (childBrain.genomeConnectionGenes[i].GetOut().layer > highestLayer)
-                {
-                    highestLayer = childBrain.genomeConnectionGenes[i].GetOut().layer;
-                }
+                    restart = false;
+            }
+            
 
-            }
         }
-        */
-        //we already have 2 layers, so highhestlayer needs to be at least 2
-        /*
-            Debug.Log(highestLayer);
-            //2-1 < 2
-        while(childBrain.layers.Count-1 < highestLayer)
-            {
-                childBrain.AddLayer(childBrain.layers.Count - 1);
-            }
-        */
+        
+     
+      
+
+
+
+
+/*
         //now nodes have to be added and inserted into the right layer according to the connection genes the child now has
         for(int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
         {
@@ -405,20 +463,30 @@ public static class Evolution
             //making sure to not add the same geneNode twice
             //problem:
             //chhild is not inheriting new nodes based on the connections
-            
+
             //in the following: check the connections IN and OUT nodes separtely, if either is not correlatable to an existing node, create and add one
-            for(int j = 0; j < childBrain.genomeNodeGenes.Count; j++)
+            if (childBrain.genomeNodeGenes.Count > 0)
             {
-                if(childBrain.genomeConnectionGenes[i].GetIn().nodeNumber == childBrain.genomeNodeGenes[j].nodeNumber)
+
+
+                for (int j = 0; j < childBrain.genomeNodeGenes.Count; j++)
                 {
-                    add = false;
-                    break;
-                }
-                else
-                {
-                    add = true;
+                    if (childBrain.genomeConnectionGenes[i].GetIn().nodeNumber == childBrain.genomeNodeGenes[j].nodeNumber)
+                    {
+                        add = false;
+                        break;
+                    }
+                    else
+                    {
+                        add = true;
+                    }
                 }
             }
+            else
+            {
+                add = true;
+            }
+
             if(add)
             {     
                 if(childBrain.genomeConnectionGenes[i].GetIn().value == -99)
@@ -432,21 +500,31 @@ public static class Evolution
                         childBrain.AddNode((int)childBrain.genomeConnectionGenes[i].GetIn().value, "Hidden", childBrain.genomeConnectionGenes[i].GetIn().layer);
                 }
             }
+
             add = false;
 
-            for(int j = 0; j < childBrain.genomeNodeGenes.Count; j++)
+            if(childBrain.genomeNodeGenes.Count > 0)
             {
-                if(childBrain.genomeConnectionGenes[i].GetOut().nodeNumber == childBrain.genomeNodeGenes[j].nodeNumber)
+                for (int j = 0; j < childBrain.genomeNodeGenes.Count; j++)
                 {
-                    add = false;
-                    break;
+                    if (childBrain.genomeConnectionGenes[i].GetOut().nodeNumber == childBrain.genomeNodeGenes[j].nodeNumber)
+                    {
+                        add = false;
+                        break;
+                    }
+                    else
+                    {
+                        add = true;
+
+                    }
                 }
-                else
-                {
-                    add = true;
-                        
-                }
+
             }
+            else
+            {
+                add = true;
+            }
+            
             
             if(add)
             {       
@@ -457,28 +535,23 @@ public static class Evolution
                 }
                 else
                 {
-//                        Debug.Log("bugged here 2");
-
+                        Debug.Log("bugged here 2");
                         childBrain.AddNode((int)childBrain.genomeConnectionGenes[i].GetOut().value, "Hidden", childBrain.genomeConnectionGenes[i].GetOut().layer);
                 }
             }
             
          
         }
-
+*/
         //now that nodes and connections are present in the child, we need to reassign the In and Out properties of each connection to thhose of
         //the nodes in genomenodelist, since otherwise the connections are still pointing to the nodes of parentA/parentB
         for(int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
         {
             childBrain.genomeConnectionGenes[i].SetIn(childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetIn().nodeNumber-1]);
+      
+
             childBrain.genomeConnectionGenes[i].SetOut(childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber-1]);
-        }
-
-
-
-
-
-
+            }
 
 
 
@@ -493,6 +566,7 @@ public static class Evolution
                     if (rnd <= (int)Mathf.Ceil(GameManager.instance.geneReenableProb * 100))
                     {
                         childBrain.genomeConnectionGenes[i].SetEnabled(true);
+                        Debug.Log("enabled, shouldnt happen");
                     }
 
                 }
@@ -502,6 +576,7 @@ public static class Evolution
 
         return childBrain;
     }
+
     //for 1-member species
     else
     {
@@ -512,7 +587,7 @@ public static class Evolution
 
     public static Network AddNodeMutation(Network network)
     {
-        if(network.genomeConnectionGenes.Count != 0)
+        if(network.genomeConnectionGenes.Count > 0)
         {
             int rnd2 = Random.Range(0,network.genomeConnectionGenes.Count);
             
@@ -597,7 +672,13 @@ public static class Evolution
             }
                 
         }
-       
+
+        if (network.genomeNodeGenes[In].layer == network.genomeNodeGenes[Out].layer && network.genomeNodeGenes[In].type.Equals("Hidden")
+            && network.genomeNodeGenes[Out].type.Equals("Hidden"))
+        {
+            Debug.Log("shouldnt happen2");
+        }
+
         NetworkManager.instance.CreateSynapse(network,network.genomeNodeGenes[In], network.genomeNodeGenes[Out], network.RandomWeight(NetworkManager.instance.minWeight,
         NetworkManager.instance.maxWeight), true);
 
@@ -612,10 +693,21 @@ public static class Evolution
         {
             //alter weight by -0.1 - 0.1
             int randomConnection = Random.Range(0, network.genomeConnectionGenes.Count);
-            //float weightChange = (float)System.Math.Round(Random.Range(-0.1f,0.1f),2);
-            float weightChange = (float)System.Math.Round(Random.Range(-GameManager.instance.mutationPower, GameManager.instance.mutationPower), 2);
-            network.genomeConnectionGenes[randomConnection].SetWeight(network.genomeConnectionGenes[randomConnection]
-            .GetWeight()+weightChange);
+            int rnd = Random.Range(0, 101);
+            int prob = (int)Mathf.Ceil(GameManager.instance.randomWeightProb * 100);
+
+            //small percentage to assign a random value (-10,10)
+            if(rnd <= prob)
+            {
+                network.genomeConnectionGenes[randomConnection].SetWeight(network.RandomWeight(NetworkManager.instance.minWeight, NetworkManager.instance.maxWeight));
+            }
+            //high probability to alter the weight a little (-2.5,2.5)
+            else
+            {
+                float weightChange = (float)System.Math.Round(Random.Range(-GameManager.instance.mutationPower, GameManager.instance.mutationPower), 2);
+                network.genomeConnectionGenes[randomConnection].SetWeight(network.genomeConnectionGenes[randomConnection].GetWeight() + weightChange);
+            }
+            
         }
         return network;
     }
@@ -693,4 +785,11 @@ public static class Evolution
 
 
    
+}
+
+public class NodeInfos
+{
+    public Node node;
+    public List<Node> inNodes;
+
 }
