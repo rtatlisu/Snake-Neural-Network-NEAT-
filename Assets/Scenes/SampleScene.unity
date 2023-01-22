@@ -379,7 +379,7 @@ MonoBehaviour:
   gameSpeed: 0.01
   POPULATIONSIZE: 30
   numOfSpecies: 1
-  addNodeProb: 1
+  addNodeProb: 0.5
   addConnectionProb: 0.15
   alterWeightProb: 0.8
   gen: 1

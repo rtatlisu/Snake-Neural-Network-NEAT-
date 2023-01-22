@@ -263,20 +263,26 @@ public static class Evolution
                     {
                         if (parent1Genes[i].GetInnovationnumber() < childBrain.genomeConnectionGenes[j].GetInnovationnumber())
                         {
-                            childBrain.genomeConnectionGenes.Insert(j, parent1Genes[i]);
+                            //childBrain.genomeConnectionGenes.Insert(j, parent1Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                            parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
                             break;
                         }
                         else if (j == childBrain.genomeConnectionGenes.Count - 1)
                         {
-                            childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
-                            break;
+                            // childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                            parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
+                                break;
                         }
                     }
 
                 }
                else
                 {
-                    childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                    //childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                    NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                    parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
                 }
                
             }
@@ -293,12 +299,16 @@ public static class Evolution
                     {
                         if (parent2Genes[i].GetInnovationnumber() < childBrain.genomeConnectionGenes[j].GetInnovationnumber())
                         {
-                            childBrain.genomeConnectionGenes.Insert(j, parent2Genes[i]);
+                            //childBrain.genomeConnectionGenes.Insert(j, parent2Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                            parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
                             break;
                         }
                         else if (j == childBrain.genomeConnectionGenes.Count - 1)
                         {
-                            childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                            //childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                            parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
                             break;
                         }
                     }
@@ -306,7 +316,9 @@ public static class Evolution
                 }
                 else
                 {
-                    childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                    //childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                    NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                    parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
                 }
                 
             }
@@ -326,12 +338,16 @@ public static class Evolution
                     {
                         if (parent1Genes[i].GetInnovationnumber() < childBrain.genomeConnectionGenes[j].GetInnovationnumber())
                         {
-                            childBrain.genomeConnectionGenes.Insert(j, parent1Genes[i]);
+                            //childBrain.genomeConnectionGenes.Insert(j, parent1Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                            parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
                             break;
                         }
                         else if (j == childBrain.genomeConnectionGenes.Count - 1)
                         {
-                            childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                            // childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                            parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
                             break;
                         }
                     }
@@ -339,7 +355,9 @@ public static class Evolution
                 }
                 else
                 {
-                    childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                    //childBrain.genomeConnectionGenes.Add(parent1Genes[i]);
+                    NetworkManager.instance.CreateSynapse(childBrain, parent1Genes[i].GetIn(), parent1Genes[i].GetOut(),
+                    parent1Genes[i].GetWeight(), parent1Genes[i].GetEnabled());
                 }
                 
             }
@@ -355,12 +373,16 @@ public static class Evolution
                     {
                         if (parent2Genes[i].GetInnovationnumber() < childBrain.genomeConnectionGenes[j].GetInnovationnumber())
                         {
-                            childBrain.genomeConnectionGenes.Insert(j, parent2Genes[i]);
+                            //childBrain.genomeConnectionGenes.Insert(j, parent2Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                            parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
                             break;
                         }
                         else if (j == childBrain.genomeConnectionGenes.Count - 1)
                         {
-                            childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                            //childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                            NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                            parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
                             break;
                         }
                     }
@@ -368,8 +390,10 @@ public static class Evolution
                 }
                 else
                 {
-                    childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
-                    
+                    //childBrain.genomeConnectionGenes.Add(parent2Genes[i]);
+                    NetworkManager.instance.CreateSynapse(childBrain, parent2Genes[i].GetIn(), parent2Genes[i].GetOut(),
+                    parent2Genes[i].GetWeight(), parent2Genes[i].GetEnabled());
+
                 }
                 
             }
@@ -590,7 +614,14 @@ public static class Evolution
         if(network.genomeConnectionGenes.Count > 0)
         {
             int rnd2 = Random.Range(0,network.genomeConnectionGenes.Count);
-            
+            //there should never be no enabled connections, so we can ignore a potential infinite loop
+            //this prevents disabling a disabled connection, which makes no sense of course
+            /*
+            while (network.genomeConnectionGenes[rnd2].GetEnabled() == false)
+            {
+                rnd2 = Random.Range(0, network.genomeConnectionGenes.Count);
+            }
+            */
             //disable existing connection
             network.genomeConnectionGenes[rnd2].SetEnabled(false);
             //create new node

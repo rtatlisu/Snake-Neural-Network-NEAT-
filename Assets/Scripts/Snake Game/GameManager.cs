@@ -424,6 +424,7 @@ public class GameManager : MonoBehaviour
                                 if (rnd <= prob)
                                 {
                                     Evolution.AddNodeMutation(network);
+                              
                                 }
 
                                 prob = (int)Mathf.Ceil(addConnectionProb * 100);
