@@ -229,6 +229,10 @@ public class Network
         //in an activation function
 
         float sum = 0;
+        if(genomeConnectionGenes.Count > 25)
+        {
+            Debug.Log("lol");
+        }
 
         //going through all layers but the first
         for(int i = 1; i < layers.Count; i++)

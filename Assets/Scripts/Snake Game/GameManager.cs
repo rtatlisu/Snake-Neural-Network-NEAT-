@@ -275,7 +275,8 @@ public class GameManager : MonoBehaviour
                 //this loop solves the case of having more species in the parental generation than in thhe upcoming generation
                 //having fewer species in the new generation means we have empty species in the childspecies list whichh shouldnt
                 //be passed to the parent
-              
+
+           
                 int it = 0;
                 while (it < childSpecies.Count)
                 {

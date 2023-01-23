@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 433e97cd9358e49189cbcdac6314b7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfBoards: 2
+  numOfBoards: 30
   board: {fileID: 5325111345271286513, guid: 6ab7f9ee532644c029fa4cbd7a5400eb, type: 3}
   listOfBoards: []
   boardsPerRow: 6

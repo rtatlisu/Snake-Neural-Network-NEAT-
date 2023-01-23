@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.MemoryProfiler;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Networking.Types;
 
@@ -401,6 +404,8 @@ public static class Evolution
 
         //EXPERIMENTAL
         //now nodes have to be added and inserted into the right layer according to the connection genes the child now has
+
+        //determining all nodes to be added
         List<Node> insertedNodes = new List<Node>();
         for(int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
         {
@@ -441,6 +446,7 @@ public static class Evolution
                 for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
                 {
                     //shiftnode needed
+                    //index out of bounds appeared below
                     if (childBrain.genomeConnectionGenes[i].GetIn().type.Equals("Hidden")
                         && childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden")
                         && childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetIn().nodeNumber - 1].layer >=
@@ -614,46 +620,63 @@ public static class Evolution
         if(network.genomeConnectionGenes.Count > 0)
         {
             int rnd2 = Random.Range(0,network.genomeConnectionGenes.Count);
-            //there should never be no enabled connections, so we can ignore a potential infinite loop
-            //this prevents disabling a disabled connection, which makes no sense of course
-            /*
-            while (network.genomeConnectionGenes[rnd2].GetEnabled() == false)
+            
+            
+            bool viable = false;
+            //checking if there is at least 1 enabled gene
+            for(int i = 0; i < network.genomeConnectionGenes.Count; i++)
             {
-                rnd2 = Random.Range(0, network.genomeConnectionGenes.Count);
-            }
-            */
-            //disable existing connection
-            network.genomeConnectionGenes[rnd2].SetEnabled(false);
-            //create new node
-            //nodenumer-1 is experimental
-            // int nodeInLayer = network.genomeNodeGenes[network.genomeConnectionGenes[rnd2].GetIn().nodeNumber-1].layer;
-            int nodeInLayer = network.genomeConnectionGenes[rnd2].GetIn().layer;
-           // int nodeOutLayer = network.genomeNodeGenes[network.genomeConnectionGenes[rnd2].GetOut().nodeNumber-1].layer;
-           int nodeOutLayer = network.genomeConnectionGenes[rnd2].GetOut().layer;
-
-            //i.e one or more layer(s) inbetween
-            // Debug.Log(nodeOutLayer + " - " + nodeInLayer + " > " + " 1");
-            
-            
-             if(nodeOutLayer - nodeInLayer > 1)
-             {
-                 network.AddNode(0, "Hidden", (nodeInLayer+1));
-             }
-             //i.e. no layer inbetween -> we need a new layer
-             else if(nodeOutLayer - nodeInLayer == 1)
-             {
-              
-                network.AddLayer(nodeOutLayer);
-                 network.AddNode(0, "Hidden", nodeOutLayer);
+                if (network.genomeConnectionGenes[i].GetEnabled() == false)
+                {
+                    viable = false;
+                }
+                else
+                {
+                    viable = true;
+                    break;
+                }
             }
             
-            //synapse leading into the new node
-            NetworkManager.instance.CreateSynapse(network,network.genomeConnectionGenes[rnd2].GetIn(), network.genomeNodeGenes[network.genomeNodeGenes.Count-1]
-            ,1, true);
-            //synapse leading out of the new node
-            NetworkManager.instance.CreateSynapse(network,network.genomeNodeGenes[network.genomeNodeGenes.Count-1], network.genomeConnectionGenes[rnd2].GetOut(),
-            network.genomeConnectionGenes[rnd2].GetWeight(), true);
+            if (viable)
+            {
+                // this prevents disabling a disabled connection, which makes no sense of course
+                while (network.genomeConnectionGenes[rnd2].GetEnabled() == false)
+                {
+                    rnd2 = Random.Range(0, network.genomeConnectionGenes.Count);
+                }
 
+                //disable existing connection
+                network.genomeConnectionGenes[rnd2].SetEnabled(false);
+                //create new node
+                //nodenumer-1 is experimental
+                // int nodeInLayer = network.genomeNodeGenes[network.genomeConnectionGenes[rnd2].GetIn().nodeNumber-1].layer;
+                int nodeInLayer = network.genomeConnectionGenes[rnd2].GetIn().layer;
+                // int nodeOutLayer = network.genomeNodeGenes[network.genomeConnectionGenes[rnd2].GetOut().nodeNumber-1].layer;
+                int nodeOutLayer = network.genomeConnectionGenes[rnd2].GetOut().layer;
+
+                //i.e one or more layer(s) inbetween
+                // Debug.Log(nodeOutLayer + " - " + nodeInLayer + " > " + " 1");
+
+
+                if (nodeOutLayer - nodeInLayer > 1)
+                {
+                    network.AddNode(0, "Hidden", (nodeInLayer + 1));
+                }
+                //i.e. no layer inbetween -> we need a new layer
+                else if (nodeOutLayer - nodeInLayer == 1)
+                {
+
+                    network.AddLayer(nodeOutLayer);
+                    network.AddNode(0, "Hidden", nodeOutLayer);
+                }
+
+                //synapse leading into the new node
+                NetworkManager.instance.CreateSynapse(network, network.genomeConnectionGenes[rnd2].GetIn(), network.genomeNodeGenes[network.genomeNodeGenes.Count - 1]
+                , 1, true);
+                //synapse leading out of the new node
+                NetworkManager.instance.CreateSynapse(network, network.genomeNodeGenes[network.genomeNodeGenes.Count - 1], network.genomeConnectionGenes[rnd2].GetOut(),
+                network.genomeConnectionGenes[rnd2].GetWeight(), true);
+            }
         }
         return network;
     }
