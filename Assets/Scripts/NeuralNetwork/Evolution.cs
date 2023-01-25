@@ -34,6 +34,9 @@ public static class Evolution
     //but if a snake in this gen has the highhest fitness, it would always be selected for mating
     //maybe i can modify the sigmoid function to give outputs between 0.00 and 0.90
 
+        
+
+
         //sum fitness of all snakes
         int sumOfFitness = 0;
         if(snakes.Count > 1)

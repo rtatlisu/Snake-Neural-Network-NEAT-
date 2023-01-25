@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public NetworkManager nManager;
     TextMeshProUGUI generation;
     TextMeshProUGUI speciesTxt;
+    int punishedSpecies = -1;
     
     //if all boards are gameover, i need to find out
     //idea: iterate over listofboards and their gameover field and if all are true, we start evolving
@@ -37,6 +38,8 @@ public class GameManager : MonoBehaviour
     //public List<List<Snake>> species;
     public List<List<GameObject>> species;
     int speciesNum = 1;
+    List<int> speciesHighestFitness;
+    List<speciesInfos> speciesInfos;
 
     public float compat_threshhold = 3.0f;
     float compat_modifier = 0.3f;
@@ -46,6 +49,9 @@ public class GameManager : MonoBehaviour
     public bool multipleStructuralMutations = false;
     public bool randomWeight;
     public float randomWeightProb = 0.1f;
+    public bool developMode = false;
+    public float eliminationPercentile = 0.8f;
+    public int noImprovementDropoff = 15;
 
 
     float sumOfAdjFitnesses = 0.0f;
@@ -64,6 +70,8 @@ public class GameManager : MonoBehaviour
          storedConnections = new List<Synapse>();
          species = new List<List<GameObject>>();
          inactiveBoards = new List<GameObject>();
+        speciesHighestFitness = new List<int>();
+        speciesInfos = new List<speciesInfos>();
 
     }
     void Start()
@@ -94,7 +102,15 @@ public class GameManager : MonoBehaviour
                 {
                     startEvolving = true;
                     evolved = false;
-                    restart = Time.time+3.0f;
+                    if(developMode)
+                    {
+                        restart = Time.time + 3.0f;
+                    }
+                    else
+                    {
+                        restart = Time.time + 0.5f;
+                    }
+                    
                     
                 }
                 else
@@ -290,13 +306,14 @@ public class GameManager : MonoBehaviour
                         it++;
                     }
                 }
+               
 
                 if(gen > 2)
                 {
                     species = childSpecies;
                 }
-                
-         
+
+
 
                 //selection, crossover, mutation
                 networks = new List<Network>();
@@ -307,14 +324,32 @@ public class GameManager : MonoBehaviour
                     List<float> adjFitnessesList = new List<float>();
                     for(int i = 0; i < species.Count; i++)
                     {
-                        for(int j = 0; j < species[i].Count; j++)
+                        
+                        for (int j = 0; j < species[i].Count; j++)
                         {
-                          sumOfAdjFitnesses +=  AdjustedFitness(species[i][j].GetComponent<Snake>(), species[i]);
+                            sumOfAdjFitnesses += AdjustedFitness(species[i][j].GetComponent<Snake>(), species[i]);
                         }
                         adjFitnessesList.Add(sumOfAdjFitnesses);
-                        sumOfAdjFitnesses = 0;   
+                        sumOfAdjFitnesses = 0;
+                       
+
                     }
-                    float divisor = 0.0f;
+                    if (punishedSpecies != -1)
+                    {
+                      
+                        for(int i = 0; i < species.Count; i++)
+                        {
+                            if (species[i][0].GetComponent<Snake>().boardScript.species == punishedSpecies)
+                            {
+                                adjFitnessesList[i] = 0;
+                                break;
+                            }
+                        }
+                        
+                        punishedSpecies = -1;
+                 
+                    }
+                float divisor = 0.0f;
                     
                     //the divisor to specify how many chhildren a species can hhave is calculated here in form of the sum of all adj fitnesses
                     for(int i = 0; i < adjFitnessesList.Count; i++)
@@ -337,6 +372,7 @@ public class GameManager : MonoBehaviour
                     //adjustment to above:
                     //case 1: if we only have 1 species and the sum of adjusted fitnesses is 0, below applies
                     //case 2: if we have multiple species and every species has a sum of adjusted fitnesses of 0, below applies for one species
+                    
                     bool allZero = false;
                     if(offspringStake.Count == 1 && offspringStake[0] == 0)
                     {
@@ -375,6 +411,7 @@ public class GameManager : MonoBehaviour
                     //imlement the speciestxt code in the first for loop but only if offspringnum[i].count != 0
                     for(int i = 0; i < offspringNum.Count; i++)
                     {
+                        EliminateWorst(species[i]);
                         if (offspringNum[i] != 0)
                         {
                             countSpecies++;
@@ -539,47 +576,126 @@ public class GameManager : MonoBehaviour
 
 
 
-                //EXPERIMENTAL
-               /*
-                    
-                species = new List<List<GameObject>>();
-                for (int i = 0; i < listOfBoards.Count; i++)
+            //implement elimination code here
+
+            //check if a species is not present in the list
+                for (int i = 0; i < species.Count; i++)
                 {
-                    if (species.Count == 0)
+                    bool add = false;
+                    if (speciesInfos.Count > 0)
                     {
-                        species.Add(new List<GameObject>());
-                        species[0].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
-                    }
-                    else if (species.Count > 0)
-                    {
-                        bool addSpecies = false;
-                        for (int j = 0; j < species.Count; j++)
+                        for (int j = 0; j < speciesInfos.Count; j++)
                         {
-                            if (species[j][0].GetComponent<Snake>().boardScript.species !=
-                                listOfBoards[i].GetComponent<Board>().species)
+                            if (species[i][0].GetComponent<Snake>().boardScript.species == speciesInfos[j].speciesNum)
                             {
-                                addSpecies = true;
+                                add = false;
+                                break;
                             }
                             else
                             {
-                                addSpecies = false;
-                                species[j].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
-                                break;
+                                if(species[i][0].GetComponent<Snake>().boardScript.species != 0)
+                                {
+                                    add = true;
+                                }
+                                
                             }
                         }
-                        if (addSpecies)
+                    }
+                    else
+                    {
+                        if (species[i][0].GetComponent<Snake>().boardScript.species != 0)
                         {
-                            species.Add(new List<GameObject>());
-                            species[species.Count - 1].Add(listOfBoards[i].GetComponent<Board>().snakeInstance);
+                            add = true;
                         }
                     }
-
+                    if (add)
+                    {
+                        speciesInfos.Add(new speciesInfos(0, 0, species[i][0].GetComponent<Snake>().boardScript.species));
+                    }
                 }
-                      
-               */ 
+                //determine if fitness has surpassed maxfitness for each species
+                int maxFitness = 0;
+                
+                for (int i = 0; i < species.Count; i++)
+                {
+
+                    for (int j = 0; j < species[i].Count; j++)
+                    {
+                        if (maxFitness < species[i][j].GetComponent<Snake>().boardScript.fitness)
+                        {
+                            maxFitness = species[i][j].GetComponent<Snake>().boardScript.fitness;
+                       
+                        }
+
+                    }
+                    //assigning maxfitness, if maxfitness hhas increased and punishh the species if not
+                    for (int j = 0; j < speciesInfos.Count; j++)
+                    {
+                        if (speciesInfos[j].speciesNum == species[i][0].GetComponent<Snake>().boardScript.species)
+                        {
+           
+                            if(maxFitness > speciesInfos[j].maxFitness)
+                            {
+                                speciesInfos[j].maxFitness = maxFitness;
+                                speciesInfos[j].numGensNoImprovement = 0;
+
+                            }
+                            else
+                            {
+                                speciesInfos[j].numGensNoImprovement += 1;
+                            }
+                                
+                            break;
+                            
+
+                        }
+                    }
+                }
+                //find the species that are not present on the board anymore and punishh them.
+                //thhis is a nice byproduct to not only remove active species if they reached
+                //numGensNoImprovement >= x, but also species that dont exist anymore
+                bool inactive = false;
+                for (int i = 0; i < speciesInfos.Count; i++)
+                {
+                    for (int j = 0; j < species.Count; j++)
+                    {
+                        if (species[j][0].GetComponent<Snake>().boardScript.species == speciesInfos[i].speciesNum)
+                        {
+                            inactive = false;
+                            break;
+                        }
+                        else
+                        {
+                            inactive = true;
+                        }
+                    }
+                    if (inactive)
+                    {
+                        speciesInfos[i].numGensNoImprovement += 1;
+                    }
+                }
+
+                //species' that have exceded the threshhold for no improvement wont be able to reproduce
+
+                for (int i = 0; i < species.Count; i++)
+                {
+                    for (int j = 0; j < speciesInfos.Count; j++)
+                    {
+                        if (species[i][0].GetComponent<Snake>().boardScript.species == speciesInfos[j].speciesNum)
+                        {
+                            if (speciesInfos[j].numGensNoImprovement >= noImprovementDropoff)
+                            {
+                                punishedSpecies = speciesInfos[j].speciesNum;
+                                speciesInfos.RemoveAt(j);
+                            }
+                        }
+                    }
+                }
+
                 
 
-               
+
+
 
 
 
@@ -723,8 +839,51 @@ public class GameManager : MonoBehaviour
         return offspringDist;
 
     }
+
+    void EliminateWorst(List<GameObject> species)
+    {
+        //sort snakes in each species according to fitness
+        List<GameObject> orderedSnakes = Evolution.SelectionSort(species);
+        //only eliminate snakes with at least 3 members in the species
+        if(orderedSnakes.Count > 2)
+        {
+            float percentile = eliminationPercentile;
+            int n = orderedSnakes.Count;
+            int spot = Mathf.RoundToInt(percentile * n);
+
+            int rank = 0;
+            
+            rank = orderedSnakes[spot-1].GetComponent<Snake>().boardScript.fitness;
+             
+            //now we have the fitness value which belongs to the eliminationPercentile together with all fitnesses below
+            for(int i = 0; i < spot; i++)
+            {
+                orderedSnakes.RemoveAt(0);
+            }
+            
+            
+               
+            
+        }
+
+    }
  
 
+
+}
+
+public class speciesInfos
+{
+    public int maxFitness = 0;
+    public int numGensNoImprovement;
+    public int speciesNum;
+
+    public speciesInfos(int maxFitness, int numGensNoImprovement, int speciesNum)
+    {
+        this.maxFitness = maxFitness;
+        this.numGensNoImprovement = numGensNoImprovement;
+        this.speciesNum = speciesNum;
+    }
 
 }
 
