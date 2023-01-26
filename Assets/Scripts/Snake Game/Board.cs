@@ -35,6 +35,8 @@ public class Board : MonoBehaviour
      public int species = 0;
      public Network childBrain = null;
     public bool start_drawing_nn = false;
+    double distance = 0;
+    int moveToFruitCounter = 0;
      
     
 
@@ -406,8 +408,33 @@ public class Board : MonoBehaviour
         /*fitness = (int) (((fruitsEaten*5) + distTravelled) - ((1/(2+fruitsEaten/distTravelled))*
          ((fruitsEaten*5) + distTravelled)));
         */
-        fitness = (int)(((fruitsEaten * 15) + distTravelled) - ((1 / (2 + fruitsEaten / distTravelled)) *
-         ((fruitsEaten * 15) + distTravelled)));
+        /* fitness = (int)(((fruitsEaten * 15) + distTravelled) - ((1 / (2 + fruitsEaten / distTravelled)) *
+          ((fruitsEaten * 15) + distTravelled)));
+        */
+        Vector2 fruitPos = fruitInstance.transform.position;
+        Vector2 snakePos = snakeInstance.GetComponent<Snake>().snakeComposites[0].transform.position;
+        
+        if (Math.Sqrt((Math.Pow((fruitPos.x - snakePos.x), 2) + Math.Pow((fruitPos.y - snakePos.y), 2))) > distance && distance != 0)
+        {
+            moveToFruitCounter -= 2;
+          
+        }
+        else
+        {
+            moveToFruitCounter += 1;
+            
+        }
+      
+        distance = Math.Sqrt((Math.Pow((fruitPos.x - snakePos.x), 2) + Math.Pow((fruitPos.y - snakePos.y), 2)));
+
+        //fitness = (int) (fruitsEaten * 15 + distTravelled - ((1 / (1 + fruitsEaten)) * (distTravelled * 0.5))) + moveToFruitCounter;
+        fitness = moveToFruitCounter + fruitsEaten*10;
+
+        if(fitness < 0)
+        {
+            fitness = 0;
+        }
+
     }
 
 

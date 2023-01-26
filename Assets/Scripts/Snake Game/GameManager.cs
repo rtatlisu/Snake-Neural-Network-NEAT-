@@ -47,7 +47,6 @@ public class GameManager : MonoBehaviour
     public float mutationPower = 2.5f;
     public float geneReenableProb = 0f;
     public bool multipleStructuralMutations = false;
-    public bool randomWeight;
     public float randomWeightProb = 0.1f;
     public bool developMode = false;
     public float eliminationPercentile = 0.8f;
@@ -858,7 +857,12 @@ public class GameManager : MonoBehaviour
             //now we have the fitness value which belongs to the eliminationPercentile together with all fitnesses below
             for(int i = 0; i < spot; i++)
             {
-                orderedSnakes.RemoveAt(0);
+                //preventing to eliminate all but one snakes in a species in which case the next generation is a copy of this one snake
+                if(orderedSnakes.Count > 2)
+                {
+                    orderedSnakes.RemoveAt(0);
+                }
+                
             }
             
             

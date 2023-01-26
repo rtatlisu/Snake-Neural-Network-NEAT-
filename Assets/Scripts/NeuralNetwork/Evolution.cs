@@ -148,7 +148,8 @@ public static class Evolution
     //maybe crossover could bbe reworked considering efficiency and length
    public static Network Crossover(List<GameObject> parents) //needed parameters: taking in 2 snakes 
    {
-    if(parents.Count > 1)
+        Network childBrain = new Network(12);
+    if (parents.Count > 1)
     {
         int parent1Size = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
         int parent2Size = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
@@ -158,7 +159,7 @@ public static class Evolution
 
         List<Synapse> parent1Genes = new List<Synapse>();
         List<Synapse> parent2Genes = new List<Synapse>();
-        Network childBrain = new Network(12);
+        
         bool matchingFound = false;
         int matchingIndexP1 = -1;
         int matchingIndexP2 = -1;
@@ -599,7 +600,7 @@ public static class Evolution
                     if (rnd <= (int)Mathf.Ceil(GameManager.instance.geneReenableProb * 100))
                     {
                         childBrain.genomeConnectionGenes[i].SetEnabled(true);
-                        Debug.Log("enabled, shouldnt happen");
+                    
                     }
 
                 }
@@ -613,7 +614,85 @@ public static class Evolution
     //for 1-member species
     else
     {
-        return parents[0].GetComponent<Snake>().brain;
+        Network network = parents[0].GetComponent<Snake>().brain;
+        for(int i = 0; i < network.genomeConnectionGenes.Count; i++)
+        {
+                NetworkManager.instance.CreateSynapse(childBrain, network.genomeConnectionGenes[i].GetIn(), network.genomeConnectionGenes[i].GetOut(),
+                network.genomeConnectionGenes[i].GetWeight(), network.genomeConnectionGenes[i].GetEnabled());
+        }
+        List<Node> insertedNodes = new List<Node>();
+        for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
+        {
+            bool add = false;
+            if (insertedNodes.Count > 0 && childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden"))
+            {
+                for (int j = 0; j < insertedNodes.Count; j++)
+                {
+                    if (childBrain.genomeConnectionGenes[i].GetOut().nodeNumber == insertedNodes[j].nodeNumber)
+                    {
+                        add = false;
+                        break;
+                    }
+                    else
+                    {
+                        add = true;
+                    }
+                }
+            }
+            else if (childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden"))
+            {
+                add = true;
+            }
+
+            if (add)
+            {    //initially insert all hidden nodes in the first layer, i.e. input ->hidden->output
+                childBrain.AddNode(0, "Hidden", 1);
+                insertedNodes.Add(childBrain.genomeNodeGenes[childBrain.genomeNodeGenes.Count - 1]);
+            }
+
+        }
+        bool restart = true;
+        while (restart)
+        {
+            if (childBrain.genomeConnectionGenes.Count > 0)
+            {
+                for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
+                {
+                    //shiftnode needed
+                    //index out of bounds appeared below
+                    if (childBrain.genomeConnectionGenes[i].GetIn().type.Equals("Hidden")
+                        && childBrain.genomeConnectionGenes[i].GetOut().type.Equals("Hidden")
+                        && childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetIn().nodeNumber - 1].layer >=
+                        childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer)
+                    {
+                        // childBrain.ShiftNode(childBrain.genomeConnectionGenes[i].GetOut(), childBrain.genomeConnectionGenes[i].GetOut().layer,
+                        // childBrain.genomeConnectionGenes[i].GetOut().layerIndex, (childBrain.genomeConnectionGenes[i].GetOut().layer + 1));
+                        childBrain.ShiftNode(childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1],
+                            childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer,
+                            childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layerIndex,
+                            childBrain.genomeNodeGenes[childBrain.genomeConnectionGenes[i].GetOut().nodeNumber - 1].layer + 1);
+                        //todo:
+                        //need to work with genomenodegenes because genomeconnectiongenes holds the layers from the parents in which
+                        //the nodes have already been positioned in their layers
+                        //we need to start off hhere with all hidden nodes in layer 1 though
+                        restart = true;
+                        break;
+                    }
+                    else
+                    {
+                        restart = false;
+                    }
+                }
+            }
+            else
+            {
+                restart = false;
+            }
+
+
+        }
+            //return parents[0].GetComponent<Snake>().brain;
+            return childBrain;
     }
    }
 
