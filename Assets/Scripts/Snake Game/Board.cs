@@ -36,7 +36,8 @@ public class Board : MonoBehaviour
      public Network childBrain = null;
     public bool start_drawing_nn = false;
     double distance = 0;
-    int moveToFruitCounter = 0;
+    float moveToFruitCounter = 0;
+    int fruitBonus = 0;
      
     
 
@@ -137,21 +138,22 @@ public class Board : MonoBehaviour
             gameOver = true;
         }
 
-      
-        if (snakeScript == null)
-        {
-             snakeInstance = Instantiate(snakePrefab, Vector2.zero, Quaternion.identity);
-             snakeInstance.name = "Snake";
-             snakeInstance.transform.parent = this.transform;
-             snakeScript = snakeInstance.GetComponent<Snake>();
-             gameOver = false;
-             movesLeft = 100;
-        
-        }
+        /*
+          if (snakeScript == null)
+          {
+               snakeInstance = Instantiate(snakePrefab, Vector2.zero, Quaternion.identity);
+               snakeInstance.name = "Snake";
+               snakeInstance.transform.parent = this.transform;
+               snakeScript = snakeInstance.GetComponent<Snake>();
+               gameOver = false;
+               movesLeft = 100;
+
+          }
+        */
+       
 
 
-        
-          if(snakeScript.brain != null && /*!newGen*/ start_drawing_nn || snakeScript.brain != null && GameManager.instance.gen == 1 && !newGen)
+        if (snakeScript.brain != null && /*!newGen*/ start_drawing_nn || snakeScript.brain != null && GameManager.instance.gen == 1 && !newGen)
             {
                 start_drawing_nn = false;
 
@@ -357,7 +359,8 @@ public class Board : MonoBehaviour
         }
 
         //thhis is for all children 
-          
+
+     
         else if(snakeScript.brain == null && snakeScript.snakeComposites != null &&
         snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen > 1 && childBrain != null)
         {
@@ -416,7 +419,7 @@ public class Board : MonoBehaviour
         
         if (Math.Sqrt((Math.Pow((fruitPos.x - snakePos.x), 2) + Math.Pow((fruitPos.y - snakePos.y), 2))) > distance && distance != 0)
         {
-            moveToFruitCounter -= 2;
+            moveToFruitCounter -= 1.5f;
           
         }
         else
@@ -426,9 +429,18 @@ public class Board : MonoBehaviour
         }
       
         distance = Math.Sqrt((Math.Pow((fruitPos.x - snakePos.x), 2) + Math.Pow((fruitPos.y - snakePos.y), 2)));
-
+        //snake will receive additional rewards for every fruit eaten starting after the first
+        if(fruitsEaten <= 1)
+        {
+            fruitBonus = 0;
+        }
+        else
+        {
+            fruitBonus = (fruitsEaten * 5);
+        }
+        
         //fitness = (int) (fruitsEaten * 15 + distTravelled - ((1 / (1 + fruitsEaten)) * (distTravelled * 0.5))) + moveToFruitCounter;
-        fitness = moveToFruitCounter + fruitsEaten*10;
+        fitness = (int)moveToFruitCounter + fruitsEaten*(10+fruitBonus);
 
         if(fitness < 0)
         {
@@ -448,6 +460,10 @@ public class Board : MonoBehaviour
             {
                 if(snakeScript.brain.layers[0][i].state == true)
                 {
+                    if (nnvScript.layers[0].Count-1 < i)
+                    {
+                        print("lol");
+                    }
                     nnvScript.layers[0][i].
                     GetComponent<SpriteRenderer>().color = Color.green;
                 }
@@ -509,6 +525,21 @@ public class Board : MonoBehaviour
                 nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.red;
             }
         }
+    }
+
+    public void attachSnake()
+    {
+        
+        snakeInstance.name = "Snake";
+        snakeInstance.transform.parent = this.transform;
+        snakeScript = snakeInstance.GetComponent<Snake>();
+        gameOver = false;
+        movesLeft = 100;
+
+    }
+    public void spawnSnake()
+    {
+        snakeInstance = Instantiate(snakePrefab, Vector2.zero, Quaternion.identity);
     }
 }
 

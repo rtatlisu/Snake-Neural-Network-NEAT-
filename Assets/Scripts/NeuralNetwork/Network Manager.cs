@@ -119,8 +119,8 @@ public class NetworkManager
         }
         
       //  Debug.Log("Excess: "+excessOrDisjoint.Count);
-        float c1 = 1.0f;
-        float c2 = 1.0f;
+        float c1 = 2.0f;
+        float c2 = 0f;
 
        /* 
         if(genomeA.Count < 20 && genomeB.Count < 20)
@@ -151,9 +151,10 @@ public class NetworkManager
         {
             Debug.Log("B: " +genomeB[i].GetIn().nodeNumber + " " + genomeB[i].GetOut().nodeNumber);
         }
-*/
+*/  
         float temp = (c1*excessOrDisjoint.Count) + (c2*avgWeightDistance);
-//            Debug.Log(excessOrDisjoint.Count + " + " + avgWeightDistance );
+   
+  //          Debug.Log(excessOrDisjoint.Count + " + " + avgWeightDistance +" >= " + GameManager.instance.compat_threshhold);
             if(float.IsNaN(temp)) temp = 0;
             return temp;        
         

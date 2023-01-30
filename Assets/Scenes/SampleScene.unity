@@ -383,8 +383,11 @@ MonoBehaviour:
   addConnectionProb: 0.02
   alterWeightProb: 0.8
   gen: 1
+  speciesTxt: {fileID: 0}
+  countSpecies: 0
+  punishedSpecies: -1
   compat_threshhold: 3
-  num_species_target: 5
+  num_species_target: 2
   mutationPower: 2.5
   geneReenableProb: 0
   multipleStructuralMutations: 0
@@ -392,6 +395,8 @@ MonoBehaviour:
   developMode: 0
   eliminationPercentile: 0.8
   noImprovementDropoff: 15
+  elitism: 0
+  speciesMaturationTime: 10
   boardNumber: 0
 --- !u!4 &1451708316
 Transform:

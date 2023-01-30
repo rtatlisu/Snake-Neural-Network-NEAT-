@@ -49,6 +49,10 @@ public static class Evolution
         else
         {
             //sometimes gives an argument out of range exception
+            if(snakes.Count-1 < 0)
+            {
+                Debug.Log("lol");
+            }
             sumOfFitness = snakes[0].GetComponent<Snake>().boardScript.fitness;
         }
         List<GameObject> orderedFitness = new List<GameObject>();
@@ -151,13 +155,14 @@ public static class Evolution
         Network childBrain = new Network(12);
     if (parents.Count > 1)
     {
-        int parent1Size = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
-        int parent2Size = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
-        List<Synapse> p1Connections = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes;
-        List<Synapse> p2Connections = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes;
+            int parent1Size = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
+            int parent2Size = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes.Count;
+            List<Synapse> p1Connections = parents[0].GetComponent<Snake>().brain.genomeConnectionGenes;
+            List<Synapse> p2Connections = parents[1].GetComponent<Snake>().brain.genomeConnectionGenes;
+           
 
 
-        List<Synapse> parent1Genes = new List<Synapse>();
+            List<Synapse> parent1Genes = new List<Synapse>();
         List<Synapse> parent2Genes = new List<Synapse>();
         
         bool matchingFound = false;
@@ -920,12 +925,529 @@ public static class Evolution
    }
 
 
+
+
+    public static void UpdateSpeciesMetrics()
+    {
+        //remove any species containing 0 snakes
+        int it = 0;
+        while (it < GameManager.instance.species.Count)
+        {
+            if (GameManager.instance.species[it].snakes.Count == 0)
+            {
+                GameManager.instance.species.RemoveAt(it);
+                it = 0;
+            }
+            else
+            {
+                it++;
+            }
+        }
+        //update species parameters
+        for(int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            Species species = GameManager.instance.species[i];
+            species.setAge(species.getAge() + 1);
+            species.setLastImprovement(species.getLastImprovement() + 1);
+            int avgFitness = 0;
+            for(int j = 0; j < species.snakes.Count; j++)
+            {
+                if (species.snakes[j].GetComponent<Snake>().boardScript.fitness > species.getMaxFitness())
+                {
+                    species.setMaxFitness(species.snakes[j].GetComponent<Snake>().boardScript.fitness);
+                    species.setLastImprovement(0);
+                }
+                avgFitness  += species.snakes[j].GetComponent<Snake>().boardScript.fitness;
+            }
+            if(avgFitness != 0)
+            {
+                avgFitness /= species.snakes.Count;
+            }
+            
+            species.setAvgFitness(avgFitness);
+
+            if(species.getAge() >= GameManager.instance.speciesMaturationTime)
+            {
+                species.setYoung(false);
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+    public static void Evaluate(List<GameObject> snakes)
+    {
+        //if there are no species yet, create one and assign all snakes to it
+        if (GameManager.instance.species.Count == 0)
+        {
+            Species newSpecies = new Species(1);
+            GameManager.instance.species.Add(newSpecies);
+            for (int i = 0; i < snakes.Count; i++)
+            {
+                GameManager.instance.species[0].AddSnake(snakes[i]);
+            }
+        }
+
+
+        //calculate adjustedfitness for each snake in each species and sum up the adjusted fitness of each snake per species
+        float sumOfAdjFitnesses = 0.0f;
+       List<float> adjFitnessesList = new List<float>();
+        for (int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+
+            for (int j = 0; j < GameManager.instance.species[i].snakes.Count; j++)
+            {
+                sumOfAdjFitnesses += AdjustedFitness(GameManager.instance.species[i].snakes[j].GetComponent<Snake>(),
+                    GameManager.instance.species[i].snakes);
+            }
+            //adjFitnessesList.Add(sumOfAdjFitnesses);
+            GameManager.instance.species[i].setAdjFitness(sumOfAdjFitnesses);
+            sumOfAdjFitnesses = 0;
+
+
+        }
+
+      
+
+    }
+
+
+
+    static float AdjustedFitness(Snake snake, List<GameObject> speciesPop)
+    {
+        return (float)snake.boardScript.fitness / speciesPop.Count;
+    }
+
+
+
+
+    public static void Reproduce(List<int> offspringNum)
+    {
+        GameManager.instance.networks = new List<Network>();
+
+        for (int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            
+            
+            for (int j = 0; j < GameManager.instance.species[i].getOffspring(); j++)
+            {
+                Network network = Evolution.Crossover(Evolution.Selection(GameManager.instance.species[i].snakes));
+
+                //EXPERIMENTAL
+                //the for loops are experimental and give each node/connection of a network the chance to mutate instead of only
+                //having the chance of mutating 3 times at max (weight, add node, add connection)
+                int rnd;
+                int prob = (int)Mathf.Ceil(GameManager.instance.addNodeProb * 100);
+                if (GameManager.instance.multipleStructuralMutations)
+                {
+                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                    {
+                        rnd = Random.Range(1, 101);
+                        if (rnd <= prob)
+                        {
+                            Evolution.AddNodeMutation(network);
+                        }
+                    }
+
+                    prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
+                    for (int x = 0; x < network.genomeNodeGenes.Count - 4; x++) //-4 because i exclude the output nodes
+                    {
+                        rnd = Random.Range(1, 101);
+                        if (rnd <= prob)
+                        {
+                            Evolution.AddConnectionMutation(network);
+                        }
+                    }
+
+                    prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
+                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                    {
+                        rnd = Random.Range(1, 101);
+                        if (rnd <= prob)
+                        {
+                            Evolution.AlterWeightMutation(network);
+                        }
+                    }
+                }
+                else
+                {
+                    rnd = Random.Range(1, 101);
+                    if (rnd <= prob)
+                    {
+                        Evolution.AddNodeMutation(network);
+
+                    }
+
+                    prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
+                    rnd = Random.Range(1, 101);
+                    if (rnd <= prob)
+                    {
+                        Evolution.AddConnectionMutation(network);
+                    }
+
+                    prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
+                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                    {
+                        rnd = Random.Range(1, 101);
+                        if (rnd <= prob)
+                        {
+                            Evolution.AlterWeightMutation(network);
+                        }
+                    }
+                }
+
+                GameManager.instance.networks.Add(network);
+            }
+        }
+    }
+
+
+
+
+    public static void Eliminate()
+    {
+        int punishedSpecies = 0;
+        for(int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            bool punishSpecies = false;
+            if (GameManager.instance.species[i].getLastImprovement() >= GameManager.instance.noImprovementDropoff)
+            {
+                punishedSpecies = i;
+                punishSpecies = true;
+            }
+
+            
+            if (punishSpecies)
+            {
+                GameManager.instance.species[punishedSpecies].setAdjFitness(0);
+                punishSpecies = false;
+                break;
+            }
+            
+        }
    
+    }
+
+
+
+
+
+    public static void CalculateOffspring()
+    {
+        float divisor = 0.0f;
+
+        //the divisor to specify how many chhildren a species can hhave is calculated here in form of the sum of all adj fitnesses
+    
+        for (int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            divisor += GameManager.instance.species[i].getAdjFitness();
+        }
+        if (divisor == 0)
+        {
+            divisor = 1.0f;
+        }
+
+        //list of decimal values representing the percentage of offspring each species gets
+        List<float> offspringStake = new List<float>();
+
+        for (int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            offspringStake.Add((float)GameManager.instance.species[i].getAdjFitness() / divisor);
+        }
+        //if all adjusted fitnesses of a species are 0, we assign 1 to the offspringstake since othherwise the species wont reproduce
+        //this could be desirable, but especially when starting the game and having only 1 species, we need to ensure them to reproduce
+        //adjustment to above:
+        //case 1: if we only have 1 species and the sum of adjusted fitnesses is 0, below applies
+        //case 2: if we have multiple species and every species has a sum of adjusted fitnesses of 0, below applies for one species
+
+        bool allZero = false;
+        if (offspringStake.Count == 1 && offspringStake[0] == 0)
+        {
+            offspringStake[0] = 1;
+        }
+        else
+        {
+            for (int i = 0; i < offspringStake.Count; i++)
+            {
+                if (offspringStake[i] == 0)
+                {
+                    allZero = true;
+                }
+                else
+                {
+                    allZero = false;
+                    break;
+                }
+            }
+            //random species will be able to reproduce
+            if (allZero)
+            {
+                int rnd = Random.Range(0, offspringStake.Count);
+                offspringStake[rnd] = 1;
+            }
+
+        }
+
+
+
+        //turning the percentages into integers, i.e. actual number of offspring
+        List <int> offspringNum = new List<int>();
+        offspringNum = OffspringDistribution(offspringStake);
+        for(int i = 0; i < offspringNum.Count; i++)
+        {
+            GameManager.instance.species[i].setOffspring(offspringNum[i]);
+        }
+
+        //after offspring numbers hhave been assigned fairly throughh adjusted fitness calculation, we grant new species (young tag) that have
+        //would not receive any offspring one chhild
+        //by doing that we need to take away a child from anothher species to fit the preset populationsize (30 for now)
+        //it seems to be somewhat fair to take thhis child from thhe species that would receive thhe most children
+
+    }
+
+
+
+
+
+
+
+    static List<int> OffspringDistribution(List<float> stake)
+    {
+        List<float> floatDist = new List<float>();
+        List<int> offspringDist = new List<int>();
+        float excess = 0.0f;
+
+        for (int i = 0; i < stake.Count; i++)
+        {
+            floatDist.Add(stake[i] * GameManager.instance.numOfBoards);
+        }
+
+        if (floatDist.Count > 1)
+        {
+            for (int i = 0; i < floatDist.Count - 1; i++)
+            {
+                int rawNumber = Mathf.FloorToInt(floatDist[i]);
+                if (floatDist[i] == 0)
+                {
+                    excess = 0;
+                }
+                else if (rawNumber == 0)
+                {
+                    excess = floatDist[i];
+                }
+                else
+                {
+                    excess = floatDist[i] % rawNumber;
+                }
+
+
+                if (excess >= 0.5f)
+                {
+                    offspringDist.Add(Mathf.CeilToInt(floatDist[i]));
+                    excess = 1f - excess;
+                    if (floatDist[i + 1] - excess < 0)
+                    {
+                        floatDist[i + 1] = 0;
+                    }
+                    else
+                    {
+                        floatDist[i + 1] -= excess;
+                    }
+
+                }
+                else
+                {
+                    offspringDist.Add(Mathf.FloorToInt(floatDist[i]));
+                    floatDist[i + 1] += excess;
+                }
+            }
+            //this portion deals with the last element in floatdist
+            int rawNumber2 = Mathf.FloorToInt(floatDist[floatDist.Count - 1]);
+            if (rawNumber2 == 0)
+            {
+                excess = floatDist[floatDist.Count - 1];
+            }
+            else
+            {
+                excess = floatDist[floatDist.Count - 1] % rawNumber2;
+            }
+
+            if (excess >= 0.5f)
+            {
+                offspringDist.Add(Mathf.CeilToInt(floatDist[floatDist.Count - 1]));
+            }
+            else
+            {
+                offspringDist.Add(Mathf.FloorToInt(floatDist[floatDist.Count - 1]));
+                //current problem with thjis:
+                //if floatdist[x] is something like 0.99999 it should be a 1, but we round down and it becomes 0
+
+            }
+
+
+        }
+        //should only be the case for a floatdist[0] of 30
+        else
+        {
+            offspringDist.Add((int)floatDist[0]);
+        }
+
+
+        return offspringDist;
+
+    }
+
+    public static void RemoveWorstPerformers(List<Species> speciesses)
+    {
+        //sort snakes in each species according to fitness
+        for(int i = 0; i < speciesses.Count; i++)
+        {
+            List<GameObject> orderedSnakes = Evolution.SelectionSort(speciesses[i].snakes);
+            //only eliminate snakes with at least 3 members in the species
+            if (orderedSnakes.Count > 2)
+            {
+                float percentile = GameManager.instance.eliminationPercentile;
+                int n = orderedSnakes.Count;
+                int spot = Mathf.RoundToInt(percentile * n);
+
+                int rank = 0;
+
+                rank = orderedSnakes[spot - 1].GetComponent<Snake>().boardScript.fitness;
+
+                //now we have the fitness value which belongs to the eliminationPercentile together with all fitnesses below
+                for (int j = 0; j < spot; j++)
+                {
+                    //preventing to eliminate all but one snakes in a species in which case the next generation is a copy of this one snake
+                    if (orderedSnakes.Count > 2)
+                    {
+                        orderedSnakes.RemoveAt(0);
+                    }
+
+                }
+            }
+
+        }
+       
+
+    }
+
+
+
+
+
+    public static void Speciate(List<GameObject> newGen)
+    {
+        //mark each snake in eachh species as parent in the beginning to know which snakes should be removed
+        //from thhe species after hhaving the children assigned to the species
+        for(int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            for(int j = 0; j < GameManager.instance.species[i].snakes.Count; j++)
+            {
+                GameManager.instance.species[i].snakes[j].GetComponent<Snake>().role = "parent";
+            }
+        }
+
+        for(int i = 0; i < newGen.Count; i++)
+        {
+            bool createSpecies = false;
+            for(int j = 0; j < GameManager.instance.species.Count; j++)
+            {
+
+                int rnd = Random.Range(0, GameManager.instance.species[j].snakes.Count);
+                
+               
+                if (NetworkManager.instance.CompatabilityDistance(newGen[i].GetComponent<Snake>().brain.genomeConnectionGenes,
+                    GameManager.instance.species[j].snakes[rnd].GetComponent<Snake>().brain.genomeConnectionGenes)
+                    >= GameManager.instance.compat_threshhold)
+                {
+                    createSpecies = true;
+                }
+                else
+                {
+                    createSpecies = false;
+                    GameManager.instance.species[j].AddSnake(newGen[i]);
+                    break;
+                    
+                }
+
+            }
+
+            if(createSpecies)
+            {
+                //find highhest species number
+                int highestSpecies = GameManager.instance.species[GameManager.instance.species.Count - 1].getId();
+                Species newSpecies = new Species(highestSpecies+1);
+                GameManager.instance.species.Add(newSpecies);
+                GameManager.instance.species[GameManager.instance.species.Count - 1].AddSnake(newGen[i]);
+            }
+        }
+
+        //now remove parents since children hhave filled the specieses
+        //maybe need to think about having 0 member species
+        int it = 0;
+        bool done = false;
+        //todo:
+        //create a better loop for removing parents
+        
+        while(it < GameManager.instance.species.Count)
+        {
+            if (GameManager.instance.species[it].snakes.Count > 0)
+            {
+                for (int j = 0; j < GameManager.instance.species[it].snakes.Count; j++)
+                {
+                    if (GameManager.instance.species[it].snakes[j].GetComponent<Snake>().role.Equals("parent"))
+                    {
+                        GameManager.instance.species[it].snakes.RemoveAt(j);
+                        done = false;
+                        break;
+                    }
+                    else
+                    {
+                        done = true;
+                    }
+                }
+            }
+            else
+            {
+                done = true;
+            }
+            
+            if(!done)
+            {
+                it = 0;
+            }
+            else
+            {
+                it++;
+            }
+        }
+        
+        GameManager.instance.countSpecies = 0;
+        for(int i = 0; i < GameManager.instance.species.Count; i++)
+        {
+            if (GameManager.instance.species[i].snakes.Count > 0)
+            {
+                GameManager.instance.countSpecies++;
+            }
+        }
+        GameManager.instance.speciesTxt.text = "Species: " + GameManager.instance.countSpecies;
+    }
+
+    
+
+    //todo;
+    //it would bbe very hhelpful regarding species maintance to not give a species (which couldve just been created) any offspring
+    //because it initially performed bad or didnt move(the problem where thhe snake wants to go where it cant at the start)
+    //new species could get some sort of babysafezone to give them a chance to establish
+    //we could then let the eliminate species methhod handle the death of a species
+    //still need to think about hhow to manage species numbers
+    //if species 2 dies, will a new species be called species 2 or do we follow an ordering of how many species exist and existed 
+
 }
 
-public class NodeInfos
-{
-    public Node node;
-    public List<Node> inNodes;
 
-}

@@ -38,10 +38,13 @@ public class Snake : MonoBehaviour
      public double probability = 0d;
      
      public bool snakeCanMove = true;
+    public string role;
+    public int species = 0;
 
     void Awake()
     {
-        snakeComposites = new List<GameObject>();    
+        snakeComposites = new List<GameObject>();
+        role = "child";
     }
 
     void Start()
@@ -50,7 +53,7 @@ public class Snake : MonoBehaviour
         boardScript = board.GetComponent<Board>();
         boardScript.gameRunning = false;
         visionList = new List<List<VisionInfo>>();
-
+        
         for(int i = 0; i < GameManager.instance.listOfBoards.Count; i++)
         {
             if(GameManager.instance.listOfBoards[i] == board)
@@ -99,8 +102,20 @@ public class Snake : MonoBehaviour
              StartCoroutine(Direction());           
         }
 
+        if(brain.whichMove == null)
+        {
+           Vision(snakeComposites[0].transform.position);
 
-        if(brain != null&&brain.whichMove[0] &&!boardScript.gameOver && !down && snakeComposites[0].transform.position
+            inputs = new List<VisionInfo>{north, east,
+            south, west};
+
+          
+            brain.UpdateInputNodes(inputs);
+        }
+
+
+       
+        if(brain != null && brain.whichMove[0] &&!boardScript.gameOver && !down && snakeComposites[0].transform.position
         +Vector3.up != snakeComposites[1].transform.position)
         {
             up = true;
@@ -109,7 +124,7 @@ public class Snake : MonoBehaviour
             left = false;
             boardScript.gameRunning = true;
         }
-        else if (brain != null&&brain.whichMove[1] && !boardScript.gameOver && !up&& snakeComposites[0].transform.position
+        else if (brain != null && brain.whichMove[1] && !boardScript.gameOver && !up&& snakeComposites[0].transform.position
         +Vector3.down != snakeComposites[1].transform.position)
         {
             up = false;
@@ -118,7 +133,7 @@ public class Snake : MonoBehaviour
             left = false;
             boardScript.gameRunning = true;
         }
-        else if (brain != null&&brain.whichMove[2] && !boardScript.gameOver && !left&& snakeComposites[0].transform.position
+        else if (brain != null && brain.whichMove[2] && !boardScript.gameOver && !left&& snakeComposites[0].transform.position
         +Vector3.right != snakeComposites[1].transform.position)
         {
             up = false;
@@ -127,7 +142,7 @@ public class Snake : MonoBehaviour
             left = false;
             boardScript.gameRunning = true;
         }
-        else if (brain != null&&brain.whichMove[3] &&!boardScript.gameOver && !right&& snakeComposites[0].transform.position
+        else if (brain != null && brain.whichMove[3] &&!boardScript.gameOver && !right&& snakeComposites[0].transform.position
         +Vector3.left != snakeComposites[1].transform.position)
         {
             up = false;
