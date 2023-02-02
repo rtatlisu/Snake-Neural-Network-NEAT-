@@ -29,6 +29,7 @@ public class Board : MonoBehaviour
     bool newGen;
     TextMeshProUGUI fitnessRef, movesLeftRef, distanceRef, fruitsRef, speciesRef;
     public int fitness = 0;
+    public float avgFitness = 0f;
      public int fruitsEaten = 0;
      public int distTravelled = 0;
      public int movesLeft = 50;
@@ -150,23 +151,13 @@ public class Board : MonoBehaviour
 
           }
         */
+
+
        
-
-
         if (snakeScript.brain != null && /*!newGen*/ start_drawing_nn || snakeScript.brain != null && GameManager.instance.gen == 1 && !newGen)
             {
                 start_drawing_nn = false;
-
-            /*
-                for(int i = 0; i < snakeScript.brain.layers.Count; i++)
-                {
-                    nnvInstance.GetComponent<NNVisualizer>().layers.Add(new List<GameObject>());
-                    for(int j = 0; j < snakeScript.brain.layers[i].Count; j++)
-                    {
-                        nnvInstance.GetComponent<NNVisualizer>().layers[i].Add(null);
-                    }
-                }
-            */
+          
                 NNVisualizer nnvScript = nnvInstance.GetComponent<NNVisualizer>();
                 newGen = true;
                 //draw nodes
@@ -347,7 +338,11 @@ public class Board : MonoBehaviour
         //if gen 1 -> default creation, else -> attach crossed brain
   
         if(snakeScript.brain == null && snakeScript.snakeComposites != null &&
-        snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen == 1) 
+        snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen == 1 && !GameManager.instance.multiRunsPerGen
+        ||
+        snakeScript.brain == null && snakeScript.snakeComposites != null &&
+        snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen == 1 && GameManager.instance.multiRunsPerGen &&
+        GameManager.instance.run == 0) 
         {
             snakeScript.Vision(snakeScript.snakeComposites[0].transform.position);
             
@@ -362,7 +357,11 @@ public class Board : MonoBehaviour
 
      
         else if(snakeScript.brain == null && snakeScript.snakeComposites != null &&
-        snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen > 1 && childBrain != null)
+        snakeScript.snakeComposites.Count > 0 && GameManager.instance.gen > 1 && childBrain != null && !GameManager.instance.multiRunsPerGen
+        ||
+        snakeScript.brain == null && snakeScript.snakeComposites != null &&
+        snakeScript.snakeComposites.Count > 0  && childBrain != null && GameManager.instance.multiRunsPerGen
+        && GameManager.instance.run >= 1)
         {
             snakeScript.Vision(snakeScript.snakeComposites[0].transform.position);
             

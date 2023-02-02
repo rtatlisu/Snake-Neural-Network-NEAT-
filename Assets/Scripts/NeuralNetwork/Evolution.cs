@@ -70,7 +70,7 @@ public static class Evolution
         }
         if(orderedFitness.Count > 1)
         {
-          orderedFitness = SelectionSort(orderedFitness); 
+          orderedFitness = SelectionSort(orderedFitness, "fitness"); 
         }
        
         
@@ -448,8 +448,14 @@ public static class Evolution
         }
         //now we shift the hidden nodes to the righht if a connection between 2 hidden nodes demands thhat
         bool restart = true;
-        while(restart)
+        int catchLoop = 0;
+        while(restart && catchLoop < 9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+                {
+                    Debug.Log("node shift erorr");
+                }
             if(childBrain.genomeConnectionGenes.Count > 0)
             {
                 for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
@@ -657,8 +663,14 @@ public static class Evolution
 
         }
         bool restart = true;
-        while (restart)
+        int catchLoop = 0;
+        while (restart && catchLoop < 9999)
         {
+            ++catchLoop;
+                if(catchLoop == 9999)
+                {
+                    Debug.Log("nodeshift error 2");
+                }
             if (childBrain.genomeConnectionGenes.Count > 0)
             {
                 for (int i = 0; i < childBrain.genomeConnectionGenes.Count; i++)
@@ -727,8 +739,14 @@ public static class Evolution
             if (viable)
             {
                 // this prevents disabling a disabled connection, which makes no sense of course
-                while (network.genomeConnectionGenes[rnd2].GetEnabled() == false)
+                int catchLoop = 0;
+                while (network.genomeConnectionGenes[rnd2].GetEnabled() == false && catchLoop < 9999 )
                 {
+                    ++catchLoop;
+                    if(catchLoop == 9999)
+                    {
+                        Debug.Log("viable error");
+                    }
                     rnd2 = Random.Range(0, network.genomeConnectionGenes.Count);
                 }
 
@@ -783,8 +801,14 @@ public static class Evolution
 
         //check if connection already exists or is not viable
         bool connectionViable = false;
-        while(!connectionViable)
+        int catchLoop = 0;
+        while(!connectionViable && catchLoop < 9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("connectionViable error");
+            }
             if(network.genomeConnectionGenes.Count > 0)
             {
                 for (int i = 0; i < network.genomeConnectionGenes.Count; i++)
@@ -863,13 +887,25 @@ public static class Evolution
     {
         List<int> output = new List<int>();
         int In = Random.Range(0, nodes.Count);
-        while (nodes[In].type.Equals("Output"))
+        int catchLoop = 0;
+        while (nodes[In].type.Equals("Output") && catchLoop < 9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("findvalidconnection1 error");
+            }
             In = Random.Range(0, nodes.Count);
         }
         int Out = Random.Range(0, nodes.Count);
-        while (nodes[Out].type.Equals("Input"))
+        catchLoop = 0;
+        while (nodes[Out].type.Equals("Input") && catchLoop < 9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("findvalidconnection2 error");
+            }
             Out = Random.Range(0, nodes.Count);
         }
        
@@ -898,8 +934,12 @@ public static class Evolution
     }
 
 
-   public static List<GameObject> SelectionSort(List<GameObject> list)
+   public static List<GameObject> SelectionSort(List<GameObject> list, string type)
    {
+        if(!type.Equals("fitness") && !type.Equals("species") && !type.Equals("avgFitness") && !type.Equals("snakeInstance"))
+        {
+            Debug.Log("this is not viable as type: " + type);
+        }
         int insertIndex = 0;
         int maxIndex = list.Count-1;
         int minElement = 0;
@@ -909,11 +949,21 @@ public static class Evolution
 
             for(int j = insertIndex+1; j < maxIndex+1; j++)
             {
-                if(list[j].GetComponent<Snake>().boardScript.fitness < list[minElement].GetComponent<Snake>().boardScript.fitness)
+                if(type.Equals("fitness") && list[j].GetComponent<Snake>().boardScript.fitness < list[minElement].GetComponent<Snake>().boardScript.fitness)
                 {
                     minElement = j;
     
                 }
+                else if(type.Equals("species") && list[j].GetComponent<Board>().species < list[minElement].GetComponent<Board>().species)
+                {
+                    minElement = j;
+                }
+                else if (type.Equals("avgFitness") && list[j].GetComponent<Snake>().boardScript.avgFitness <
+                    list[minElement].GetComponent<Snake>().boardScript.avgFitness)
+                {
+                    minElement = j;
+                }
+   
             }
             GameObject temp = list[insertIndex];
             list[insertIndex] = list[minElement];
@@ -924,6 +974,34 @@ public static class Evolution
         return list;
    }
 
+    public static List<GameObject> SelectionSort(List<GameObject> list)
+    {
+        
+        int insertIndex = 0;
+        int maxIndex = list.Count - 1;
+        int minElement = 0;
+        for (int i = 0; i < list.Count - 1; i++)
+        {
+            minElement = insertIndex;
+
+            for (int j = insertIndex + 1; j < maxIndex + 1; j++)
+            {
+                
+                if (list[j].GetComponent<Board>().snakeInstance.GetComponent<Snake>().species <
+                    list[minElement].GetComponent<Board>().snakeInstance.GetComponent<Snake>().species)
+                {
+                    minElement = j;
+                }
+            }
+            GameObject temp = list[insertIndex].GetComponent<Board>().snakeInstance;
+            list[insertIndex].GetComponent<Board>().snakeInstance = list[minElement].GetComponent<Board>().snakeInstance;
+            list[minElement].GetComponent<Board>().snakeInstance = temp;
+            insertIndex++;
+        }
+
+        return list;
+    }
+
 
 
 
@@ -931,8 +1009,14 @@ public static class Evolution
     {
         //remove any species containing 0 snakes
         int it = 0;
-        while (it < GameManager.instance.species.Count)
+        int catchLoop = 0;
+        while (it < GameManager.instance.species.Count && catchLoop < 9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("updatespeciesmetrics error");
+            }
             if (GameManager.instance.species[it].snakes.Count == 0)
             {
                 GameManager.instance.species.RemoveAt(it);
@@ -944,33 +1028,71 @@ public static class Evolution
             }
         }
         //update species parameters
-        for(int i = 0; i < GameManager.instance.species.Count; i++)
+        if(!GameManager.instance.multiRunsPerGen)
         {
-            Species species = GameManager.instance.species[i];
-            species.setAge(species.getAge() + 1);
-            species.setLastImprovement(species.getLastImprovement() + 1);
-            int avgFitness = 0;
-            for(int j = 0; j < species.snakes.Count; j++)
+            for (int i = 0; i < GameManager.instance.species.Count; i++)
             {
-                if (species.snakes[j].GetComponent<Snake>().boardScript.fitness > species.getMaxFitness())
+                Species species = GameManager.instance.species[i];
+                species.setAge(species.getAge() + 1);
+                species.setLastImprovement(species.getLastImprovement() + 1);
+                int avgFitness = 0;
+                for (int j = 0; j < species.snakes.Count; j++)
                 {
-                    species.setMaxFitness(species.snakes[j].GetComponent<Snake>().boardScript.fitness);
-                    species.setLastImprovement(0);
+                    if (species.snakes[j].GetComponent<Snake>().boardScript.fitness > species.getMaxFitness())
+                    {
+                        species.setMaxFitness(species.snakes[j].GetComponent<Snake>().boardScript.fitness);
+                        species.setLastImprovement(0);
+                    }
+                    avgFitness += species.snakes[j].GetComponent<Snake>().boardScript.fitness;
                 }
-                avgFitness  += species.snakes[j].GetComponent<Snake>().boardScript.fitness;
-            }
-            if(avgFitness != 0)
-            {
-                avgFitness /= species.snakes.Count;
-            }
-            
-            species.setAvgFitness(avgFitness);
+                if (avgFitness != 0)
+                {
+                    avgFitness /= species.snakes.Count;
+                }
 
-            if(species.getAge() >= GameManager.instance.speciesMaturationTime)
-            {
-                species.setYoung(false);
+                species.setAvgFitness(avgFitness);
+
+                if (species.getAge() >= GameManager.instance.speciesMaturationTime)
+                {
+                    species.setYoung(false);
+                }
             }
         }
+        else
+        {
+            for (int i = 0; i < GameManager.instance.species.Count; i++)
+            {
+                Species species = GameManager.instance.species[i];
+
+                if(GameManager.instance.nextGen)
+                {
+                    species.setAge(species.getAge() + 1);
+                    species.setLastImprovement(species.getLastImprovement() + 1);
+                }
+                
+                int avgFitness = 0;
+                for (int j = 0; j < species.snakes.Count; j++)
+                {
+                    if (species.snakes[j].GetComponent<Snake>().boardScript.fitness > species.getMaxFitness())
+                    {
+                        species.setMaxFitness(species.snakes[j].GetComponent<Snake>().boardScript.fitness);
+
+                        species.setLastImprovement(0);
+                       
+                    }
+
+                    avgFitness += species.snakes[j].GetComponent<Snake>().boardScript.fitness;
+                }
+                if (avgFitness != 0)
+                {
+                    avgFitness /= species.snakes.Count;
+                }
+
+                species.setAvgFitness(avgFitness);
+
+            }
+        }
+        
 
     }
 
@@ -993,10 +1115,10 @@ public static class Evolution
             }
         }
 
-
+       
         //calculate adjustedfitness for each snake in each species and sum up the adjusted fitness of each snake per species
         float sumOfAdjFitnesses = 0.0f;
-       List<float> adjFitnessesList = new List<float>();
+        List<float> adjFitnessesList = new List<float>();
         for (int i = 0; i < GameManager.instance.species.Count; i++)
         {
 
@@ -1004,6 +1126,8 @@ public static class Evolution
             {
                 sumOfAdjFitnesses += AdjustedFitness(GameManager.instance.species[i].snakes[j].GetComponent<Snake>(),
                     GameManager.instance.species[i].snakes);
+                    GameManager.instance.species[i].snakes[j].GetComponent<Snake>().boardScript.avgFitness +=
+                    GameManager.instance.species[i].snakes[j].GetComponent<Snake>().boardScript.fitness;
             }
             //adjFitnessesList.Add(sumOfAdjFitnesses);
             GameManager.instance.species[i].setAdjFitness(sumOfAdjFitnesses);
@@ -1011,6 +1135,9 @@ public static class Evolution
 
 
         }
+        
+        
+        
 
       
 
@@ -1026,84 +1153,99 @@ public static class Evolution
 
 
 
-    public static void Reproduce(List<int> offspringNum)
+    public static void Reproduce()
     {
         GameManager.instance.networks = new List<Network>();
-
-        for (int i = 0; i < GameManager.instance.species.Count; i++)
+        if(!GameManager.instance.multiRunsPerGen || GameManager.instance.multiRunsPerGen && GameManager.instance.nextGen)
         {
-            
-            
-            for (int j = 0; j < GameManager.instance.species[i].getOffspring(); j++)
+            for (int i = 0; i < GameManager.instance.species.Count; i++)
             {
-                Network network = Evolution.Crossover(Evolution.Selection(GameManager.instance.species[i].snakes));
 
-                //EXPERIMENTAL
-                //the for loops are experimental and give each node/connection of a network the chance to mutate instead of only
-                //having the chance of mutating 3 times at max (weight, add node, add connection)
-                int rnd;
-                int prob = (int)Mathf.Ceil(GameManager.instance.addNodeProb * 100);
-                if (GameManager.instance.multipleStructuralMutations)
+
+                for (int j = 0; j < GameManager.instance.species[i].getOffspring(); j++)
                 {
-                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                    Network network = Evolution.Crossover(Evolution.Selection(GameManager.instance.species[i].snakes));
+
+                    //EXPERIMENTAL
+                    //the for loops are experimental and give each node/connection of a network the chance to mutate instead of only
+                    //having the chance of mutating 3 times at max (weight, add node, add connection)
+                    int rnd;
+                    int prob = (int)Mathf.Ceil(GameManager.instance.addNodeProb * 100);
+                    if (GameManager.instance.multipleStructuralMutations)
+                    {
+                        for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                        {
+                            rnd = Random.Range(1, 101);
+                            if (rnd <= prob)
+                            {
+                                Evolution.AddNodeMutation(network);
+                            }
+                        }
+
+                        prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
+                        for (int x = 0; x < network.genomeNodeGenes.Count - 4; x++) //-4 because i exclude the output nodes
+                        {
+                            rnd = Random.Range(1, 101);
+                            if (rnd <= prob)
+                            {
+                                Evolution.AddConnectionMutation(network);
+                            }
+                        }
+
+                        prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
+                        for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
+                        {
+                            rnd = Random.Range(1, 101);
+                            if (rnd <= prob)
+                            {
+                                Evolution.AlterWeightMutation(network);
+                            }
+                        }
+                    }
+                    else
                     {
                         rnd = Random.Range(1, 101);
                         if (rnd <= prob)
                         {
                             Evolution.AddNodeMutation(network);
-                        }
-                    }
 
-                    prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
-                    for (int x = 0; x < network.genomeNodeGenes.Count - 4; x++) //-4 because i exclude the output nodes
-                    {
+                        }
+
+                        prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
                         rnd = Random.Range(1, 101);
                         if (rnd <= prob)
                         {
                             Evolution.AddConnectionMutation(network);
                         }
-                    }
 
-                    prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
-                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
-                    {
-                        rnd = Random.Range(1, 101);
-                        if (rnd <= prob)
+                        prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
+                        for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
                         {
-                            Evolution.AlterWeightMutation(network);
+                            rnd = Random.Range(1, 101);
+                            if (rnd <= prob)
+                            {
+                                Evolution.AlterWeightMutation(network);
+                            }
                         }
                     }
+
+                    GameManager.instance.networks.Add(network);
+                    GameManager.instance.speciesNumsCopy.Add(GameManager.instance.species[i].getId());
                 }
-                else
-                {
-                    rnd = Random.Range(1, 101);
-                    if (rnd <= prob)
-                    {
-                        Evolution.AddNodeMutation(network);
-
-                    }
-
-                    prob = (int)Mathf.Ceil(GameManager.instance.addConnectionProb * 100);
-                    rnd = Random.Range(1, 101);
-                    if (rnd <= prob)
-                    {
-                        Evolution.AddConnectionMutation(network);
-                    }
-
-                    prob = (int)Mathf.Ceil(GameManager.instance.alterWeightProb * 100);
-                    for (int x = 0; x < network.genomeConnectionGenes.Count; x++)
-                    {
-                        rnd = Random.Range(1, 101);
-                        if (rnd <= prob)
-                        {
-                            Evolution.AlterWeightMutation(network);
-                        }
-                    }
-                }
-
-                GameManager.instance.networks.Add(network);
             }
         }
+        else
+        {
+            for(int i = 0; i < GameManager.instance.species.Count; i++)
+            {
+                for(int j = 0; j < GameManager.instance.species[i].snakes.Count; j++)
+                {
+                    GameManager.instance.networks.Add(GameManager.instance.species[i].snakes[j].GetComponent<Snake>().brain);
+                    GameManager.instance.speciesNumsCopy.Add(GameManager.instance.species[i].getId());
+                }
+            }
+        }
+        
     }
 
 
@@ -1305,19 +1447,29 @@ public static class Evolution
     public static void RemoveWorstPerformers(List<Species> speciesses)
     {
         //sort snakes in each species according to fitness
-        for(int i = 0; i < speciesses.Count; i++)
+        List<GameObject> orderedSnakes;
+        for (int i = 0; i < speciesses.Count; i++)
         {
-            List<GameObject> orderedSnakes = Evolution.SelectionSort(speciesses[i].snakes);
+            if(GameManager.instance.nextGen)
+            {
+                for (int j = 0; j < speciesses[i].snakes.Count; j++)
+                {
+                    speciesses[i].snakes[j].GetComponent<Snake>().boardScript.avgFitness /= GameManager.instance.runsPerGen;
+                }
+                orderedSnakes = Evolution.SelectionSort(speciesses[i].snakes, "avgFitness");
+                
+            }
+            else
+            {
+                orderedSnakes = Evolution.SelectionSort(speciesses[i].snakes, "fitness");
+            }
+            
             //only eliminate snakes with at least 3 members in the species
             if (orderedSnakes.Count > 2)
             {
                 float percentile = GameManager.instance.eliminationPercentile;
                 int n = orderedSnakes.Count;
                 int spot = Mathf.RoundToInt(percentile * n);
-
-                int rank = 0;
-
-                rank = orderedSnakes[spot - 1].GetComponent<Snake>().boardScript.fitness;
 
                 //now we have the fitness value which belongs to the eliminationPercentile together with all fitnesses below
                 for (int j = 0; j < spot; j++)
@@ -1393,9 +1545,14 @@ public static class Evolution
         bool done = false;
         //todo:
         //create a better loop for removing parents
-        
-        while(it < GameManager.instance.species.Count)
+        int catchLoop = 0;
+        while(it < GameManager.instance.species.Count && catchLoop <9999)
         {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("removing parents error");
+            }
             if (GameManager.instance.species[it].snakes.Count > 0)
             {
                 for (int j = 0; j < GameManager.instance.species[it].snakes.Count; j++)

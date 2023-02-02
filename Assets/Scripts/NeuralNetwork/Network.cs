@@ -128,14 +128,20 @@ public class Network
         {
             Debug.Log("lol");
         }
-/*
-        if (layer == layers.Count - 1 && type.Equals("Hidden"))
+        /*
+                if (layer == layers.Count - 1 && type.Equals("Hidden"))
+                {
+                    AddLayer(layers.Count - 1);
+                }
+        */
+        int catchLoop = 0;
+        while (layer >= layers.Count - 1 && type.Equals("Hidden") && catchLoop < 9999)
         {
-            AddLayer(layers.Count - 1);
-        }
-*/
-        while (layer >= layers.Count - 1 && type.Equals("Hidden"))
-        {
+            ++catchLoop;
+            if(catchLoop == 9999)
+            {
+                Debug.Log("layers error");
+            }
             AddLayer(layers.Count - 1);
         }
       

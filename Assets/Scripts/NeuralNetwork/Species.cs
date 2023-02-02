@@ -55,7 +55,19 @@ public class Species
     }
     public void setAvgFitness(int avgFitness)
     {
-        this.avgFitness = avgFitness;
+        if(GameManager.instance.multiRunsPerGen)
+        {
+            this.avgFitness += avgFitness;
+        }
+        else
+        {
+            this.avgFitness = avgFitness;
+        }
+        
+    }
+    public void resetAvgFitness()
+    {
+        this.avgFitness = 0;
     }
     public int getAvgFitness()
     {
@@ -79,7 +91,19 @@ public class Species
     }
     public void setAdjFitness(float adjFitness)
     {
-        this.adjFitness = adjFitness;
+        if(GameManager.instance.multiRunsPerGen)
+        {
+            this.adjFitness += adjFitness;
+        }
+        else
+        {
+            this.adjFitness = adjFitness;
+        }
+       
+    }
+    public void resetAdjFitness()
+    {
+        this.adjFitness = 0;
     }
     public bool getYoung()
     {

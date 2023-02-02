@@ -119,7 +119,7 @@ public class NetworkManager
         }
         
       //  Debug.Log("Excess: "+excessOrDisjoint.Count);
-        float c1 = 2.0f;
+        float c1 = 1.0f;
         float c2 = 0f;
 
        /* 
