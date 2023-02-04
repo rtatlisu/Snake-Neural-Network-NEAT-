@@ -69,6 +69,14 @@ After the entire population, e.g. 30 snakes, finished their game, the above step
     * The child receives all connections from parentB and non from parentA
   * parentA's fitness == parentB's fitness
     * The child receives all connections from parentA and parentB
+* Mutation:
+  * When the new offspring is created, their networks get a chance to alter a bit
+  * **AddConnectionMutation**:
+    * Create a connection between some randomly selected nodes, if there is no connection yet
+  * **AddNodeMutation**:
+    * Disable an existing connection and create a node on this position. The in-node of the disabled connection and the new node will be connected by a new connection and the new node and the out-node of the disabled connection will be connected by a new connection
+  * **AlterWeightMutation**:
+    * Iterate over all connections and with a certain chance either alter the weight by a little or, with a low chance, assign a random weight to the connection
     
 **Speciation**<br>
 * Offspring has been created and will now undergo speciation
@@ -85,7 +93,7 @@ The fitness function is the driving evolutionary factor that decides in which di
 If not set optimally, snakes could find unwishful loopholes that cause large fitness gains but are contradictory to how snake is played.<br>
 An exemplary fitness function is the following: <br>
 $$fitness = moveToFruitCounter + fruitsEaten*(10+fruitBonus)$$ <br>
-*moveToFruitCounter*: Snake moves closer to fruit -> +1 fitness, snake moves away from fruit -> -1.5 fitness<br>
+*moveToFruitCounter*: Snake moves closer to fruit &#8594; +1 fitness, snake moves away from fruit &#8594; -1.5 fitness<br>
 *fruitsEaten*: Number of fruits eaten<br>
 *fruitBonus*: increases by 5 for each fruit eaten. This rewards eating multiple fruits as this indicates that this is an intentional behavior and not just luck. <br>
 <br>
