@@ -103,7 +103,7 @@ Generation: 250+
 
 <br>
 
-<img src="https://user-images.githubusercontent.com/65288418/216693970-b29eb104-8f2c-4f13-bc60-a9d0ab2e72e8.gif" width="1000" height="550" />
+<img src="https://user-images.githubusercontent.com/65288418/216693970-b29eb104-8f2c-4f13-bc60-a9d0ab2e72e8.gif" width="1000" height="500" />
 
 <br>
 <br>
@@ -111,7 +111,7 @@ Generation: 250+
 **Showcase of the actual program with 9 out of 30 boards**: <br>
 
 <br>
-<img src="https://user-images.githubusercontent.com/65288418/216694947-ce8e24e7-fc66-4710-a2be-7f3fe6887010.gif" width="1000" height="550" />
+<img src="https://user-images.githubusercontent.com/65288418/216694947-ce8e24e7-fc66-4710-a2be-7f3fe6887010.gif" width="1000" height="600" />
 <br>
 <br>
 The GIF above shows a problem that caused a very neat technique to arise.<br>
