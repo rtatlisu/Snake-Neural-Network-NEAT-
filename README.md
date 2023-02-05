@@ -103,7 +103,7 @@ Generation: 250+
 
 <br>
 
-<img src="https://user-images.githubusercontent.com/65288418/216693970-b29eb104-8f2c-4f13-bc60-a9d0ab2e72e8.gif" width="1000" height="500" />
+<img src="https://user-images.githubusercontent.com/65288418/216693970-b29eb104-8f2c-4f13-bc60-a9d0ab2e72e8.gif" width="1000" height="450" />
 
 <br>
 <br>
