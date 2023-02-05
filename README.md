@@ -116,7 +116,5 @@ Generation: 250+
 <br>
 The GIF above shows a problem that caused a very neat technique to arise.<br>
 There is a roughly 25% chance for a snake to not move at all because its first move it wants to make is illegal, i.e. it wants to move up, but is looking down.<br><br>
-The technique to solve this problem turned out to also be handy for a better evolutionary process. When "MultRunsPerGen" is toggled on, all snakes on the board are allowed to play for e.g. 10 rounds until they are evaluated. In these 10 rounds, the fitness of each snake will be stored and at the end will be divided by 10 to get the average fitness. By doing that we greatly reduce lucky performances, but also unlucky performances from dictating the next offspring.<br><br>
-On top of that, it ensures that certain networks are truly better performing and prevents lucky performances of bad networks to be spread on to the offspring.
-
+The technique to solve this problem turned out to also be handy for a better evolutionary process. When "MultRunsPerGen" is toggled on, all snakes on the board are allowed to play for e.g. 10 rounds until they are evaluated. In these 10 rounds, the fitness of each snake will be stored and at the end will be divided by 10 to get the average fitness. By doing that we greatly reduce lucky performances, but also unlucky performances from dictating the next offspring.
 
