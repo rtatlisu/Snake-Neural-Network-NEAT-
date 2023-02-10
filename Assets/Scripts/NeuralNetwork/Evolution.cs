@@ -447,6 +447,8 @@ public static class Evolution
            
         }
         //now we shift the hidden nodes to the righht if a connection between 2 hidden nodes demands thhat
+
+        //DEFINITELY A LOOP ERROR HERE! catchloop == 9999 is triggered multiple times
         bool restart = true;
         int catchLoop = 0;
         while(restart && catchLoop < 9999)
@@ -664,6 +666,7 @@ public static class Evolution
         }
         bool restart = true;
         int catchLoop = 0;
+            //INFINITE LOOP HHERE: catchloop == 9999 is triggered
         while (restart && catchLoop < 9999)
         {
             ++catchLoop;
@@ -856,7 +859,7 @@ public static class Evolution
     {
         if(network.genomeConnectionGenes.Count != 0)
         {
-            //alter weight by -0.1 - 0.1
+            
             int randomConnection = Random.Range(0, network.genomeConnectionGenes.Count);
             int rnd = Random.Range(0, 101);
             int prob = (int)Mathf.Ceil(GameManager.instance.randomWeightProb * 100);
@@ -1153,6 +1156,28 @@ public static class Evolution
 
 
 
+    public static void FindElites()
+    {
+        if(GameManager.instance.elitism)
+        {
+            if (GameManager.instance.species[0].snakes[0].GetComponent<Snake>().brain.genomeConnectionGenes.Count > 1)
+            {
+                Debug.Log("lol");
+            }
+            for(int i = 0; i < GameManager.instance.species.Count; i++)
+            {
+                if (GameManager.instance.species[i].snakes.Count >= 5)
+                {
+                    //since the snakes should bbe ordered in eachh species according to their fitness, we should be fine by
+                    //selecting the last element of the list
+                    GameManager.instance.species[i].snakes[GameManager.instance.species[i].snakes.Count - 1].GetComponent<Snake>().elite = true;
+                }
+            }
+        }
+    }
+
+
+
     public static void Reproduce()
     {
         GameManager.instance.networks = new List<Network>();
@@ -1160,7 +1185,16 @@ public static class Evolution
         {
             for (int i = 0; i < GameManager.instance.species.Count; i++)
             {
-
+                //find elites, pass thhem on unchanged, and reduce the offspringnum by 1 per species if elite exists
+                for(int x = 0; x < GameManager.instance.species[i].snakes.Count; x++)
+                {
+                    if (GameManager.instance.species[i].snakes[x].GetComponent<Snake>().elite)
+                    {
+                        GameManager.instance.networks.Add(GameManager.instance.species[i].snakes[x].GetComponent<Snake>().brain);
+                        GameManager.instance.species[i].setOffspring(GameManager.instance.species[i].getOffspring() - 1);
+                        break;
+                    }
+                }
 
                 for (int j = 0; j < GameManager.instance.species[i].getOffspring(); j++)
                 {

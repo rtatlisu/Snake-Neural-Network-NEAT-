@@ -2,16 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Network
 {
+    
     public List<List<Node>> layers;
+    public List<int> nodesPerLayer;
+    public List<Node> layers1D;
     public List<Node> genomeNodeGenes;
     public List<Synapse> genomeConnectionGenes;
+    [HideInInspector]
     public int currentNumOfNodes = 1;
     float E = 2.71828f;
+    [HideInInspector]
     public bool[] whichMove;
     Node node;
+    [HideInInspector]
     public Synapse synapse;
+    [HideInInspector]
     public NNVisualizer nnInstance;
   
 
@@ -72,6 +80,46 @@ public class Network
   
 
 
+    }
+    public Network(Network input)
+    {
+        NetworkManager.instance.AddNetwork(this);
+        layers = new List<List<Node>>();
+        genomeNodeGenes = new List<Node>();
+        genomeConnectionGenes = new List<Synapse>();
+        layers.Add(new List<Node>()); // first layer i.e. input layer
+        layers.Add(new List<Node>()); // last layer i.e. output layer
+
+        //input nodes
+        for (int i = 0; i < input.genomeNodeGenes.Count; i++)
+        {
+            if (input.genomeNodeGenes[i].type.Equals("Input"))
+            {
+                if (input.genomeNodeGenes[i].value == -99)
+                {
+                    AddNode(false, "Input", 0);
+                }
+                else
+                {
+                    AddNode(0, "Input", 0);
+                }
+            }
+            else if(input.genomeNodeGenes[i].type.Equals("Hidden"))
+            {
+                AddNode(0, "Hidden", input.genomeNodeGenes[i].layer);
+            }
+            else if (input.genomeNodeGenes[i].type.Equals("Output"))
+            {
+                AddNode(0, "Output", input.genomeNodeGenes[i].layer);
+            }
+            
+        }
+
+       for(int i = 0; i < input.genomeConnectionGenes.Count; i++)
+        {
+            NetworkManager.instance.CreateSynapse(this, input.genomeConnectionGenes[i].GetIn(), input.genomeConnectionGenes[i].GetOut(),
+                input.genomeConnectionGenes[i].GetWeight(), input.genomeConnectionGenes[i].GetEnabled());
+        }
     }
 
     public Network(int numberOfInputNodes)
@@ -374,16 +422,16 @@ public class Network
 
 
 }
-
+[System.Serializable]
 public class Synapse
 {
    // private int In;
    // private int Out;
-   private Node In;
-   private Node Out;
-    private float weight;
-    private bool enabled;
-    private int innovationNumber;
+   [SerializeField]private Node In;
+    [SerializeField] private Node Out;
+    [SerializeField] private float weight;
+    [SerializeField] private bool enabled;
+    [SerializeField] private int innovationNumber;
 
     public Synapse(Node In, Node Out, float weight, bool enabled, int innovationNumber)
     {

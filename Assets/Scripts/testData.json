@@ -1,0 +1,446 @@
+{
+    "nodesPerLayer": [
+        12,
+        4
+    ],
+    "layers1D": [
+        {
+            "value": 0.0,
+            "type": "Input",
+            "nodeNumber": 1,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 0
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 2,
+            "state": true,
+            "layer": 0,
+            "layerIndex": 1
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 3,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.6470588445663452,
+            "type": "Input",
+            "nodeNumber": 4,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 3
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 5,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 4
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 6,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 5
+        },
+        {
+            "value": 1.0,
+            "type": "Input",
+            "nodeNumber": 7,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 6
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 8,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 7
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 9,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 8
+        },
+        {
+            "value": 0.3529411852359772,
+            "type": "Input",
+            "nodeNumber": 10,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 9
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 11,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 10
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 12,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 11
+        },
+        {
+            "value": 0.9991755485534668,
+            "type": "Output",
+            "nodeNumber": 13,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.9995236396789551,
+            "type": "Output",
+            "nodeNumber": 14,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 1
+        },
+        {
+            "value": 0.0,
+            "type": "Output",
+            "nodeNumber": 15,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.0009770498145371676,
+            "type": "Output",
+            "nodeNumber": 16,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 3
+        }
+    ],
+    "genomeNodeGenes": [
+        {
+            "value": 0.0,
+            "type": "Input",
+            "nodeNumber": 1,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 0
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 2,
+            "state": true,
+            "layer": 0,
+            "layerIndex": 1
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 3,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.6470588445663452,
+            "type": "Input",
+            "nodeNumber": 4,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 3
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 5,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 4
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 6,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 5
+        },
+        {
+            "value": 1.0,
+            "type": "Input",
+            "nodeNumber": 7,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 6
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 8,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 7
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 9,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 8
+        },
+        {
+            "value": 0.3529411852359772,
+            "type": "Input",
+            "nodeNumber": 10,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 9
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 11,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 10
+        },
+        {
+            "value": -99.0,
+            "type": "Input",
+            "nodeNumber": 12,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 11
+        },
+        {
+            "value": 0.9991755485534668,
+            "type": "Output",
+            "nodeNumber": 13,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.9995236396789551,
+            "type": "Output",
+            "nodeNumber": 14,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 1
+        },
+        {
+            "value": 0.0,
+            "type": "Output",
+            "nodeNumber": 15,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.0009770498145371676,
+            "type": "Output",
+            "nodeNumber": 16,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 3
+        }
+    ],
+    "genomeConnectionGenes": [
+        {
+            "In": {
+                "value": 1.0,
+                "type": "Input",
+                "nodeNumber": 7,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 6
+            },
+            "Out": {
+                "value": 0.0009770498145371676,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 3
+            },
+            "weight": -6.929999828338623,
+            "enabled": true,
+            "innovationNumber": 1
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 3,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 2
+            },
+            "Out": {
+                "value": 0.0009770498145371676,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 3
+            },
+            "weight": 5.360000133514404,
+            "enabled": true,
+            "innovationNumber": 2
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 5,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 4
+            },
+            "Out": {
+                "value": 0.9991755485534668,
+                "type": "Output",
+                "nodeNumber": 13,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 0
+            },
+            "weight": 7.100000381469727,
+            "enabled": true,
+            "innovationNumber": 3
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 3,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 2
+            },
+            "Out": {
+                "value": 0.0,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 2
+            },
+            "weight": -10.870000839233399,
+            "enabled": true,
+            "innovationNumber": 4
+        },
+        {
+            "In": {
+                "value": 0.3529411852359772,
+                "type": "Input",
+                "nodeNumber": 10,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 9
+            },
+            "Out": {
+                "value": 0.9995236396789551,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 1
+            },
+            "weight": 6.840000152587891,
+            "enabled": true,
+            "innovationNumber": 5
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 5,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 4
+            },
+            "Out": {
+                "value": 0.9995236396789551,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 1
+            },
+            "weight": -4.110000133514404,
+            "enabled": true,
+            "innovationNumber": 10
+        },
+        {
+            "In": {
+                "value": 0.6470588445663452,
+                "type": "Input",
+                "nodeNumber": 4,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 3
+            },
+            "Out": {
+                "value": 0.9995236396789551,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 1
+            },
+            "weight": 8.089999198913575,
+            "enabled": true,
+            "innovationNumber": 7
+        }
+    ],
+    "currentNumOfNodes": 17,
+    "whichMove": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "synapse": {
+        "In": {
+            "value": 0.6470588445663452,
+            "type": "Input",
+            "nodeNumber": 4,
+            "state": false,
+            "layer": 0,
+            "layerIndex": 3
+        },
+        "Out": {
+            "value": 0.9995236396789551,
+            "type": "Output",
+            "nodeNumber": 14,
+            "state": false,
+            "layer": 1,
+            "layerIndex": 1
+        },
+        "weight": 8.089999198913575,
+        "enabled": true,
+        "innovationNumber": 7
+    },
+    "nnInstance": {
+        "instanceID": 0
+    }
+}

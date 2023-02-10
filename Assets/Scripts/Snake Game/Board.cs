@@ -20,10 +20,10 @@ public class Board : MonoBehaviour
     Vector2 boardVector;
     public bool gameRunning;
     public bool gameOver;
-     GameObject northWall;
-     GameObject eastWall;
-     GameObject southWall;
-     GameObject westWall;
+    public GameObject northWall;
+    public GameObject eastWall;
+    public GameObject southWall;
+    public GameObject westWall;
     public  GameObject nnVisualizer;
     public GameObject nnvInstance;
     bool newGen;
@@ -348,8 +348,16 @@ public class Board : MonoBehaviour
             
             snakeScript.inputs = new List<VisionInfo>{snakeScript.north, snakeScript.east, 
             snakeScript.south, snakeScript.west};
-
-            snakeScript.brain = new Network(12, snakeScript.inputs);
+            if(!GameManager.instance.loadSaveFile)
+            {
+                snakeScript.brain = new Network(12, snakeScript.inputs);
+            }
+            else
+            {
+                SaveData.load();
+                snakeScript.brain = SaveData.network;
+            }
+            
             snakeScript.brain.UpdateInputNodes(snakeScript.inputs);       
         }
 

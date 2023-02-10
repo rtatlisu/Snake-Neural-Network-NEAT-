@@ -40,6 +40,7 @@ public class Snake : MonoBehaviour
      public bool snakeCanMove = true;
     public string role;
     public int species = 0;
+    public bool elite = false;
 
     void Awake()
     {
@@ -164,7 +165,7 @@ public class Snake : MonoBehaviour
         coroutineRunning = true;
 
         //draw visions, i.e. to the food, north, east, west and south wall
-      /* 
+       /*
        if(boardScript.fruitScript != null)
         {
             distanceToFood = distanceToObject(snakeComposites[0].transform.position,

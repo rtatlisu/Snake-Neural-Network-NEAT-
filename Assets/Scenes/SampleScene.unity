@@ -512,15 +512,16 @@ MonoBehaviour:
   boardsPerRow: 6
   boardsPerColumn: 6
   gameSpeed: 0.01
-  addNodeProb: 0.02
-  addConnectionProb: 0.03
-  alterWeightProb: 0.05
+  addNodeProb: 0.01
+  addConnectionProb: 0.1
+  alterWeightProb: 0.8
   gen: 1
   speciesTxt: {fileID: 0}
   countSpecies: 0
   punishedSpecies: -1
+  storedConnections: []
   compat_threshhold: 6
-  num_species_target: 4
+  num_species_target: 3
   mutationPower: 2.5
   geneReenableProb: 0
   multipleStructuralMutations: 0
@@ -528,12 +529,13 @@ MonoBehaviour:
   developMode: 0
   eliminationPercentile: 0.8
   noImprovementDropoff: 15
-  elitism: 0
+  elitism: 1
   speciesMaturationTime: 10
   runsPerGen: 10
   run: 0
   multiRunsPerGen: 1
   nextGen: 0
+  loadSaveFile: 1
   boardNumber: 0
   speciesNumsCopy: 
 --- !u!4 &1451708316

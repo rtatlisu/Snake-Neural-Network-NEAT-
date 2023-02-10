@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
     public bool multiRunsPerGen;
     [HideInInspector]
     public bool nextGen = false;
+    public bool loadSaveFile;
     //EXPERIMENTAL
 
 
@@ -100,6 +101,8 @@ public class GameManager : MonoBehaviour
         runTxt = transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
         runTxt.text = "Run: " + run;
         transform.GetChild(0).GetChild(2).gameObject.SetActive(false);
+
+        
     }
 
     void Update()
@@ -202,6 +205,7 @@ public class GameManager : MonoBehaviour
                     Evolution.Eliminate();
                     Evolution.CalculateOffspring();
                     Evolution.RemoveWorstPerformers(GameManager.instance.species);
+                    Evolution.FindElites();
                     Evolution.Reproduce();
 
                     while (inactiveBoards.Count > 0)
@@ -252,6 +256,39 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    //save the gamestate every x runs
+                    if(run > 0 && run % 30 == 0)
+                    {
+                        //determining best performing species
+                        int maxFitnessIndex = 0;
+                        for(int i = 0; i < species.Count-1; i++)
+                        {
+                            if (species[i].getMaxFitness() < species[i+1].getMaxFitness())
+                            {
+                                maxFitnessIndex = i + 1;
+                            }
+                        }
+                        //select a random snake from the species
+                        int rnd = Random.Range(0, species[maxFitnessIndex].snakes.Count);
+                        Network network = species[maxFitnessIndex].snakes[rnd].GetComponent<Snake>().brain;
+
+                        network.layers1D = new List<Node>();
+                        network.nodesPerLayer = new List<int>();
+                        for (int i = 0; i < network.layers.Count; i++)
+                        {
+                            network.nodesPerLayer.Add(network.layers[i].Count);
+                            for(int j = 0; j < network.layers[i].Count; j++)
+                            {
+                                network.layers1D.Add(network.layers[i][j]);
+                            }
+                        }
+
+
+                        SaveData.network = network;
+                        SaveData.save();
+                    }
+                   
+
                    
                     if(run > 0 && run % runsPerGen == 0)
                     {
@@ -264,7 +301,8 @@ public class GameManager : MonoBehaviour
                         run += 1;
                         nextGen = false;
                     }
-                    
+
+                    //sets the run counter active
                     if(transform.GetChild(0).GetChild(2).gameObject.activeSelf == false)
                     {
                         transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
@@ -281,9 +319,7 @@ public class GameManager : MonoBehaviour
 
 
                     snakes = new List<GameObject>();
-                    //taking in all the snakes
-                    //for later: handle speciation if everything works
-
+                  
                     for (int j = 0; j < listOfBoards.Count; j++)
                     {
 
@@ -324,9 +360,10 @@ public class GameManager : MonoBehaviour
                         Evolution.Eliminate();
                         Evolution.CalculateOffspring();
                         Evolution.RemoveWorstPerformers(GameManager.instance.species);
-                        
+                        Evolution.FindElites();
                     }
                     speciesNumsCopy = new List<int>();
+                    
                     Evolution.Reproduce();
 
                     /*         List<int> speciesNumsCopy = new List<int>();
