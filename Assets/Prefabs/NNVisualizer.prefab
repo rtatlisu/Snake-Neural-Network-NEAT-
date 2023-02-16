@@ -45,3 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   node: {fileID: 3683478673044225218, guid: a6d05f4c0c30341f1aec7e5adf0ae639, type: 3}
+  biasNode: {fileID: 3763699249322708620, guid: 8a0bb36e686254babb724c5c269246ad, type: 3}
+  instantiateNode: {fileID: 0}
+  vConnections: []

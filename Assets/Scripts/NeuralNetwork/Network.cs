@@ -55,6 +55,7 @@ public class Network
             AddNode(list[i].food, "Input", 0);
          
         }
+        AddNode(true, "Bias", 0);
 
         //output nodes
         for(int i = 0; i < 4; i++)
@@ -104,6 +105,10 @@ public class Network
                     AddNode(0, "Input", 0);
                 }
             }
+            else if (input.genomeNodeGenes[i].type.Equals("Bias"))
+            {
+                AddNode(true, "Bias", 0);
+            }
             else if(input.genomeNodeGenes[i].type.Equals("Hidden"))
             {
                 AddNode(0, "Hidden", input.genomeNodeGenes[i].layer);
@@ -138,9 +143,9 @@ public class Network
             AddNode(false, "Input", 0);
             AddNode(false, "Input", 0);        
         }
-
+        AddNode(true, "Bias", 0);
         //output nodes
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             AddNode(0, "Output", 1);
         }
@@ -294,6 +299,7 @@ public class Network
             {
                 sum = 0;
                 sumAltered = false;
+                float biasWeight = 0f;
                 //for each node, go through each connection to find the ones where this node is marked
                 //as out
                 for(int f = 0; f < genomeConnectionGenes.Count; f++)
@@ -304,13 +310,20 @@ public class Network
                        
                         //check if node is of type bool (value=-99) or not
                         //if type==bool ->  true:sum+=weight*1, false:sum+=weight*0
-                        if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].value == -99)
+                        if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].value == -99 &&
+                            !genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].type.Equals("Bias"))
                         {
                             if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].state == true)
                             {
                                 sum+=genomeConnectionGenes[f].GetWeight();
                                 sumAltered=true;
                             }
+                        }
+                        else if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber - 1].value == -99 &&
+                            genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber - 1].type.Equals("Bias"))
+                        {
+                            biasWeight = genomeConnectionGenes[f].GetWeight();
+                            sumAltered = true;
                         }
                         else
                         {                    
@@ -322,7 +335,7 @@ public class Network
                 }
                 if(sumAltered)
                 {      
-                    layers[i][j].value = Sigmoid(sum);
+                    layers[i][j].value = Sigmoid(sum, biasWeight);
                 }
             }
         }
@@ -356,9 +369,9 @@ public class Network
 
    } 
 
-   float Sigmoid(float weightedSum)
+   float Sigmoid(float weightedSum, float biasWeight)
    {
-        return 1/(1+Mathf.Pow(E,-weightedSum));
+        return 1/(1+Mathf.Pow(E,-(weightedSum + biasWeight)));
    }
 
         //overview

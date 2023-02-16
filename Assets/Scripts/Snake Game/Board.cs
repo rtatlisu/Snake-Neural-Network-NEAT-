@@ -39,6 +39,7 @@ public class Board : MonoBehaviour
     double distance = 0;
     float moveToFruitCounter = 0;
     int fruitBonus = 0;
+    bool networksDrawn;
      
     
 
@@ -157,36 +158,56 @@ public class Board : MonoBehaviour
         if (snakeScript.brain != null && /*!newGen*/ start_drawing_nn || snakeScript.brain != null && GameManager.instance.gen == 1 && !newGen)
             {
                 start_drawing_nn = false;
-          
+                networksDrawn = false;
+            if (GameManager.instance.drawNetworks)
+            {
+
+
+
                 NNVisualizer nnvScript = nnvInstance.GetComponent<NNVisualizer>();
                 newGen = true;
                 //draw nodes
                 //input
-                for(int i = 0; i < snakeScript.brain.layers[0].Count; i++)
+                for (int i = 0; i < snakeScript.brain.layers[0].Count; i++)
                 {
-                    nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                        /*snakeScript.brain.layers[0][i].layer*/0, i, "Input" ,Vector2.zero, Vector2.zero);
-                    nnvScript.instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[0][i].state;
-                    nnvScript.instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[0][i].value;
-                    nnvScript.instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[0][i].type;
-                    nnvScript.instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[0][i].nodeNumber;
-                    nnvScript.instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[0][i].layer;
-                    nnvScript.instantiateNode.GetComponent<vNode>().layerIndex = snakeScript.brain.layers[0][i].layerIndex;
+                    if (snakeScript.brain.layers[0][i].type.Equals("Input"))
+                    {
+                        nnvInstance.GetComponent<NNVisualizer>().vAddNode(
+                                                /*snakeScript.brain.layers[0][i].layer*/0, i, "Input", Vector2.zero, Vector2.zero);
+                        nnvScript.instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[0][i].state;
+                        nnvScript.instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[0][i].value;
+                        nnvScript.instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[0][i].type;
+                        nnvScript.instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[0][i].nodeNumber;
+                        nnvScript.instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[0][i].layer;
+                        nnvScript.instantiateNode.GetComponent<vNode>().layerIndex = snakeScript.brain.layers[0][i].layerIndex;
+                    }
+                    else if(snakeScript.brain.layers[0][i].type.Equals("Bias"))
+                    {
+                        nnvInstance.GetComponent<NNVisualizer>().vAddNode(
+                                                                        /*snakeScript.brain.layers[0][i].layer*/0, i, "Bias", Vector2.zero, Vector2.zero);
+                        nnvScript.instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[0][i].state;
+                        nnvScript.instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[0][i].value;
+                        nnvScript.instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[0][i].type;
+                        nnvScript.instantiateNode.GetComponent<vNode>().nodeNumber = snakeScript.brain.layers[0][i].nodeNumber;
+                        nnvScript.instantiateNode.GetComponent<vNode>().layer = snakeScript.brain.layers[0][i].layer;
+                        nnvScript.instantiateNode.GetComponent<vNode>().layerIndex = snakeScript.brain.layers[0][i].layerIndex;
+                    }
+                    
                 }
                 //Hidden
-                if(snakeScript.brain.layers.Count > 2)
+                if (snakeScript.brain.layers.Count > 2)
                 {
                     //-2 excludes input and output layer
-                    for(int i = 0; i < snakeScript.brain.layers.Count - 2; i++)
+                    for (int i = 0; i < snakeScript.brain.layers.Count - 2; i++)
                     {
-                    //i = 0; i < 8 - 2 = 6
-                    //j = 0; j < layer[1].count = 3
-                    //layer[1][0].layer...layer[1][2]
+                        //i = 0; i < 8 - 2 = 6
+                        //j = 0; j < layer[1].count = 3
+                        //layer[1][0].layer...layer[1][2]
                         //i+1 -> starting at the first hidden layer 
-                        for(int j = 0; j < snakeScript.brain.layers[i+1].Count; j++)
+                        for (int j = 0; j < snakeScript.brain.layers[i + 1].Count; j++)
                         {
                             nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                           /* snakeScript.brain.layers[i+1][j].layer*/(i+1),j, "Hidden" ,Vector2.zero, Vector2.zero);
+                           /* snakeScript.brain.layers[i+1][j].layer*/(i + 1), j, "Hidden", Vector2.zero, Vector2.zero);
                             nnvScript.instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[i + 1][j].state;
                             nnvScript.instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[i + 1][j].value;
                             nnvScript.instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[i + 1][j].type;
@@ -199,10 +220,10 @@ public class Board : MonoBehaviour
                     }
                 }
                 //output
-                for(int i = 0; i < snakeScript.brain.layers[snakeScript.brain.layers.Count-1].Count; i++)
+                for (int i = 0; i < snakeScript.brain.layers[snakeScript.brain.layers.Count - 1].Count; i++)
                 {
                     nnvInstance.GetComponent<NNVisualizer>().vAddNode(
-                        snakeScript.brain.layers[snakeScript.brain.layers.Count-1][i].layer,i, "Output",Vector2.zero, Vector2.zero);
+                        snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].layer, i, "Output", Vector2.zero, Vector2.zero);
                     nnvScript.instantiateNode.GetComponent<vNode>().state = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].state;
                     nnvScript.instantiateNode.GetComponent<vNode>().value = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].value;
                     nnvScript.instantiateNode.GetComponent<vNode>().type = snakeScript.brain.layers[snakeScript.brain.layers.Count - 1][i].type;
@@ -212,110 +233,115 @@ public class Board : MonoBehaviour
                 }
 
 
-            //when drawing the net, the net already exists.
-            //meaning, with the shifts of the last layer, there will be an ordered list
-            //with 1 hidden layer it will be [input, hidden, output].
-            //the shhift that only happens in a list now must happen visually
-            //if input and output are drawn, we can start from the last hidden layer
-            //and always insert at index 1, moving all other nodes to the right
+                //when drawing the net, the net already exists.
+                //meaning, with the shifts of the last layer, there will be an ordered list
+                //with 1 hidden layer it will be [input, hidden, output].
+                //the shhift that only happens in a list now must happen visually
+                //if input and output are drawn, we can start from the last hidden layer
+                //and always insert at index 1, moving all other nodes to the right
 
-            //hidden
-            //need the two nodes to place the new node inbetween
-            //additionally: remove the existng connection between A and B, place node C
-            //on position (A+B)/2, connect A with C and C with B
+                //hidden
+                //need the two nodes to place the new node inbetween
+                //additionally: remove the existng connection between A and B, place node C
+                //on position (A+B)/2, connect A with C and C with B
 
-            //if no connections exit, set gameover true and gamerunning false, since the snake wont move and the game wouldnt end for it
-            //IMPORTANT: if all connections are disabled, the snake wouldnt move as well
-            //if snake cant move because the output doesnt suit the requirements, game needs to end as well (snake should move up
-            //but is facing down)
+                //if no connections exit, set gameover true and gamerunning false, since the snake wont move and the game wouldnt end for it
+                //IMPORTANT: if all connections are disabled, the snake wouldnt move as well
+                //if snake cant move because the output doesnt suit the requirements, game needs to end as well (snake should move up
+                //but is facing down)
 
 
-     
+
                 //draw connections
-               for(int i = 0; i < snakeScript.brain.genomeConnectionGenes.Count; i++)
-               {    
+                for (int i = 0; i < snakeScript.brain.genomeConnectionGenes.Count; i++)
+                {
                     NNVisualizer nnv = nnvInstance.GetComponent<NNVisualizer>();
                     List<Synapse> connections = snakeScript.brain.genomeConnectionGenes;
                     List<Node> nodes = snakeScript.brain.genomeNodeGenes;
-                /*
-                    for(int j = 0; j < connections.Count; j++)
-                    {
-                         connections[j].SetIn(nodes[connections[j].GetIn().nodeNumber - 1]);
-                         connections[j].SetOut(nodes[connections[j].GetOut().nodeNumber - 1]);
+                    /*
+                        for(int j = 0; j < connections.Count; j++)
+                        {
+                             connections[j].SetIn(nodes[connections[j].GetIn().nodeNumber - 1]);
+                             connections[j].SetOut(nodes[connections[j].GetOut().nodeNumber - 1]);
 
-                    }
-                   
-                
-                    Vector2 start = nnv.layers[connections[i].GetIn().layer][connections[i].GetIn().layerIndex].transform.position;
+                        }
 
-                    Debug.Log("problem: " + nnv.layers.Count + " " + connections[i].GetOut().layer + " " +
-                        connections[i].GetOut().layerIndex + " nodeOut: " + connections[i].GetOut().nodeNumber + " board: " + boardNumber);
-               
-                    if(nnv.layers.Count <= connections[i].GetOut().layer)
-                    {
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        Debug.Log("i hate it: " + nodes[j].nodeNumber + " " + nodes[j].layer);
+
+                        Vector2 start = nnv.layers[connections[i].GetIn().layer][connections[i].GetIn().layerIndex].transform.position;
+
+                        Debug.Log("problem: " + nnv.layers.Count + " " + connections[i].GetOut().layer + " " +
+                            connections[i].GetOut().layerIndex + " nodeOut: " + connections[i].GetOut().nodeNumber + " board: " + boardNumber);
+
+                        if(nnv.layers.Count <= connections[i].GetOut().layer)
+                        {
+                        for (int j = 0; j < nodes.Count; j++)
+                        {
+                            Debug.Log("i hate it: " + nodes[j].nodeNumber + " " + nodes[j].layer);
+                        }
                     }
+                        Vector2 end = nnv.layers[connections[i].GetOut().layer][connections[i].GetOut().layerIndex].transform.position;
+                        int nodeIn = connections[i].GetIn().nodeNumber;
+                        int nodeOut = connections[i].GetOut().nodeNumber;
+                        int innoNum = connections[i].GetInnovationnumber();
+                        float weight = connections[i].GetWeight();
+                        bool enabled = connections[i].GetEnabled();
+
+                        nnv.vAddConnection(start,end,nodeIn,nodeOut, innoNum, weight, enabled);
+                    */
+
+                    int InIndex = 0;
+                    int OutIndex = 0;
+                    int InLayer = 0;
+                    int OutLayer = 0;
+                    for (int j = 0; j < snakeScript.brain.layers.Count; j++)
+                    {
+                        for (int f = 0; f < snakeScript.brain.layers[j].Count; f++)
+                        {
+                            if (snakeScript.brain.layers[j][f].nodeNumber ==
+                            connections[i].GetOut().nodeNumber)
+                            {
+                                OutLayer = j;
+                                OutIndex = f;
+                                break;
+                            }
+                            else if (snakeScript.brain.layers[j][f].nodeNumber ==
+                            connections[i].GetIn().nodeNumber)
+                            {
+                                InLayer = j;
+                                InIndex = f;
+                                break;
+
+                            }
+                        }
+                    }
+                    int innoNum = -1;
+                    float weight = -100f;
+                    bool enabled = false;
+                    for (int b = 0; b < connections.Count; b++)
+                    {
+                        if (connections[i].GetIn().nodeNumber == snakeScript.brain.layers[InLayer][InIndex].nodeNumber &&
+                        connections[i].GetOut().nodeNumber == snakeScript.brain.layers[OutLayer][OutIndex].nodeNumber)
+                        {
+                            innoNum = snakeScript.brain.genomeConnectionGenes[i].GetInnovationnumber();
+                            weight = snakeScript.brain.genomeConnectionGenes[i].GetWeight();
+                            enabled = snakeScript.brain.genomeConnectionGenes[i].GetEnabled();
+                            break;
+                        }
+                    }
+
+                    nnv.vAddConnection(nnv.layers[InLayer][InIndex].transform.position,
+                    nnv.layers[OutLayer][OutIndex].transform.position,
+                    snakeScript.brain.layers[InLayer][InIndex].nodeNumber,
+                    snakeScript.brain.layers[OutLayer][OutIndex].nodeNumber, innoNum, weight, enabled);
+
+
                 }
-                    Vector2 end = nnv.layers[connections[i].GetOut().layer][connections[i].GetOut().layerIndex].transform.position;
-                    int nodeIn = connections[i].GetIn().nodeNumber;
-                    int nodeOut = connections[i].GetOut().nodeNumber;
-                    int innoNum = connections[i].GetInnovationnumber();
-                    float weight = connections[i].GetWeight();
-                    bool enabled = connections[i].GetEnabled();
-
-                    nnv.vAddConnection(start,end,nodeIn,nodeOut, innoNum, weight, enabled);
-                */
-                    
-                            int InIndex=0;
-                            int OutIndex=0;
-                            int InLayer=0;
-                            int OutLayer=0;
-                             for(int j = 0; j < snakeScript.brain.layers.Count; j++)
-                            {
-                                for(int f = 0; f < snakeScript.brain.layers[j].Count; f++)
-                                {
-                                    if(snakeScript.brain.layers[j][f].nodeNumber ==
-                                    connections[i].GetOut().nodeNumber)
-                                    {
-                                        OutLayer = j;
-                                        OutIndex = f;
-                                        break;
-                                    }
-                                    else if(snakeScript.brain.layers[j][f].nodeNumber ==
-                                    connections[i].GetIn().nodeNumber)
-                                    {
-                                        InLayer = j;
-                                        InIndex = f;
-                                        break;
-
-                                    }
-                                }
-                            }
-                            int innoNum=-1;
-                            float weight = -100f;
-                            bool enabled = false;
-                            for(int b = 0; b < connections.Count; b++)
-                            {
-                                if(connections[i].GetIn().nodeNumber == snakeScript.brain.layers[InLayer][InIndex].nodeNumber &&
-                                connections[i].GetOut().nodeNumber == snakeScript.brain.layers[OutLayer][OutIndex].nodeNumber)
-                                {
-                                    innoNum =snakeScript.brain.genomeConnectionGenes[i].GetInnovationnumber();
-                                    weight = snakeScript.brain.genomeConnectionGenes[i].GetWeight();
-                                    enabled = snakeScript.brain.genomeConnectionGenes[i].GetEnabled();
-                                    break;
-                                }
-                            }
-
-                            nnv.vAddConnection(nnv.layers[InLayer][InIndex].transform.position, 
-                            nnv.layers[OutLayer][OutIndex].transform.position,
-                            snakeScript.brain.layers[InLayer][InIndex].nodeNumber,
-                            snakeScript.brain.layers[OutLayer][OutIndex].nodeNumber,innoNum, weight, enabled);
-
-                            
-               }
-                
+                networksDrawn = true;
+            }
+            else
+            {
+                networksDrawn = false;
+            }
           }
              
        //todo
@@ -391,6 +417,7 @@ public class Board : MonoBehaviour
     { 
        gameRunning = false;
        gameOver = true;
+       //fitness = gameOver ? fitness -= (int)((1f / (2f + fruitsEaten)) * fitness) : fitness;
     }
 
     void OnFoodPickUp()
@@ -445,11 +472,14 @@ public class Board : MonoBehaviour
         {
             fruitBonus = (fruitsEaten * 5);
         }
-        
-        //fitness = (int) (fruitsEaten * 15 + distTravelled - ((1 / (1 + fruitsEaten)) * (distTravelled * 0.5))) + moveToFruitCounter;
-        fitness = (int)moveToFruitCounter + fruitsEaten*(10+fruitBonus);
 
-        if(fitness < 0)
+        //fitness = (int) (fruitsEaten * 15 + distTravelled - ((1 / (1 + fruitsEaten)) * (distTravelled * 0.5))) + moveToFruitCounter;
+        fitness = (int)moveToFruitCounter + (fruitsEaten * (10 + fruitBonus));
+        //fitness = distTravelled + fruitsEaten * (10 + fruitBonus);
+
+
+        
+        if (fitness < 0)
         {
             fitness = 0;
         }
@@ -459,77 +489,97 @@ public class Board : MonoBehaviour
 
     public void ColorizeNetwork()
     {
-        NNVisualizer nnvScript = nnvInstance.GetComponent<NNVisualizer>();
-        //litting up bool input nodes
-        for(int i = 0; i < snakeScript.brain.layers[0].Count; i++)
+        if (GameManager.instance.drawNetworks && networksDrawn)
         {
-            if(snakeScript.brain.layers[0][i].value == -99)
+            NNVisualizer nnvScript = nnvInstance.GetComponent<NNVisualizer>();
+            //litting up bool input nodes
+            for (int i = 0; i < snakeScript.brain.layers[0].Count; i++)
             {
-                if(snakeScript.brain.layers[0][i].state == true)
+                if (snakeScript.brain.layers[0][i].value == -99)
                 {
-                    if (nnvScript.layers[0].Count-1 < i)
+                    if (snakeScript.brain.layers[0][i].state == true)
                     {
-                        print("lol");
+                        if (nnvScript.layers[0].Count - 1 < i)
+                        {
+                            print("lol");
+                        }
+                        nnvScript.layers[0][i].
+                        GetComponent<SpriteRenderer>().color = Color.green;
                     }
-                    nnvScript.layers[0][i].
+                    else
+                    {
+                        nnvScript.layers[0][i].
+                        GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                }
+            }
+
+            //if snake made a move that changed its walldist, let the node having the corresponding
+            //walldist value lit up in green
+            for (int i = 0; i < snakeScript.visionList[0].Count; i++)
+            {
+                if (snakeScript.visionList[0] != null && snakeScript.visionList[1] != null &&
+                snakeScript.visionList[0][i].wallDist != snakeScript.visionList[1][i].wallDist)
+                {
+                    //0=input layer, i*3 = every third vision is a walldist
+                    nnvScript.layers[0][i * 3].
+                    GetComponent<SpriteRenderer>().color = Color.green;
+                 
+
+                }
+                else
+                {
+                    nnvScript.layers[0][i * 3].
+                    GetComponent<SpriteRenderer>().color = Color.white;
+                }
+            }
+
+            //output layer: the node being active is green, else white
+            for (int i = 0; i < snakeScript.brain.layers[snakeScript.brain.layers.Count - 1].Count; i++)
+            {
+                if (snakeScript.brain.whichMove[i])
+                {
+                    nnvScript.layers[nnvScript.layers.Count - 1][i].
                     GetComponent<SpriteRenderer>().color = Color.green;
                 }
                 else
                 {
-                    nnvScript.layers[0][i].
+                    nnvScript.layers[nnvScript.layers.Count - 1][i].
                     GetComponent<SpriteRenderer>().color = Color.white;
+
                 }
             }
-        }
 
-        //if snake made a move that changed its walldist, let the node having the corresponding
-        //walldist value lit up in green
-        for(int i = 0; i < snakeScript.visionList[0].Count; i++)
-        {
-                if(snakeScript.visionList[0] != null && snakeScript.visionList[1] != null && 
-                snakeScript.visionList[0][i].wallDist != snakeScript.visionList[1][i].wallDist)
+
+            //connections: white -> enabled, grey -> disabled         
+            for (int i = 0; i < nnvScript.vConnections.Count; i++)
             {
-                //0=input layer, i*3 = every third vision is a walldist
-                nnvScript.layers[0][i*3].
-                GetComponent<SpriteRenderer>().color = Color.green;
-
+                if (nnvScript.vConnections[i].GetComponent<vConnection>().enabled)
+                {
+                    nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.cyan;
+                    nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.cyan;
+                }
+                else
+                {
+                    nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.red;
+                    nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.red;
+                }
             }
-            else
-            {
-                nnvScript.layers[0][i*3].
-                GetComponent<SpriteRenderer>().color = Color.white;
-            }
-        }
 
-        //output layer: the node being active is green, else white
-        for(int i = 0; i < snakeScript.brain.layers[snakeScript.brain.layers.Count-1].Count; i++)
-        {
-            if(snakeScript.brain.whichMove[i])
+            //update the nodes values as the snake moves
+            for(int i = 0; i < snakeScript.brain.layers.Count; i++)
             {
-                nnvScript.layers[nnvScript.layers.Count-1][i].
-                GetComponent<SpriteRenderer>().color = Color.green;
-            }
-            else
-            {
-                nnvScript.layers[nnvScript.layers.Count-1][i].
-                GetComponent<SpriteRenderer>().color = Color.white;
-
-            }
-        }
-
-
-        //connections: white -> enabled, grey -> disabled         
-        for(int i = 0; i < nnvScript.vConnections.Count; i++)
-        {
-            if(nnvScript.vConnections[i].GetComponent<vConnection>().enabled)
-            {
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.cyan;
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.cyan;
-            }
-            else
-            {
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().startColor = Color.red;
-                nnvScript.vConnections[i].GetComponent<LineRenderer>().endColor = Color.red;
+                for(int j = 0; j < snakeScript.brain.layers[i].Count; j++)
+                {
+                    if (snakeScript.brain.layers[i][j].value != -99)
+                    {
+                        nnvScript.layers[i][j].GetComponent<vNode>().value = snakeScript.brain.layers[i][j].value;
+                    }
+                    else
+                    {
+                        nnvScript.layers[i][j].GetComponent<vNode>().state = snakeScript.brain.layers[i][j].state;
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
     Vector2 boardGameObjectLoc;
     public int boardsPerRow = 1;
     public int boardsPerColumn = 1;
-    [Range(0.01f,2.0f)]
+    [Range(0.001f,1.0f)]
     public float gameSpeed;
     //public int numOfSpecies = 1;
     public float addNodeProb = 0.03f;
@@ -59,7 +60,6 @@ public class GameManager : MonoBehaviour
     public int noImprovementDropoff = 15;
     public bool elitism;
     public int speciesMaturationTime = 10;
-    //EXPERIMENTAL
     public int runsPerGen = 20;
     [HideInInspector]
     public int run = 0;
@@ -67,7 +67,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool nextGen = false;
     public bool loadSaveFile;
-    //EXPERIMENTAL
+    public bool drawNetworks;
+   
 
 
     float sumOfAdjFitnesses = 0.0f;
@@ -77,6 +78,8 @@ public class GameManager : MonoBehaviour
     public int boardNumber = 0;
     List<int> offspringNum;
     public List<int> speciesNumsCopy;
+    GameObject cam;
+    bool coroutineRunning;
 
 
 
@@ -90,6 +93,7 @@ public class GameManager : MonoBehaviour
         species = new List<Species>();
          inactiveBoards = new List<GameObject>();
         speciesHighestFitness = new List<int>();
+        cam = GameObject.Find("Main Camera");
 
     }
     void Start()
@@ -102,11 +106,16 @@ public class GameManager : MonoBehaviour
         runTxt.text = "Run: " + run;
         transform.GetChild(0).GetChild(2).gameObject.SetActive(false);
 
-        
+     
     }
 
     void Update()
     {
+        if(!coroutineRunning && species.Count > 0)
+        {
+            StartCoroutine(LocateCamera());
+        }
+        
          
          //only called once in the first gen
         if(listOfBoards.Count == 0)
@@ -269,7 +278,7 @@ public class GameManager : MonoBehaviour
                             }
                         }
                         //select a random snake from the species
-                        int rnd = Random.Range(0, species[maxFitnessIndex].snakes.Count);
+                        int rnd = UnityEngine.Random.Range(0, species[maxFitnessIndex].snakes.Count);
                         Network network = species[maxFitnessIndex].snakes[rnd].GetComponent<Snake>().brain;
 
                         network.layers1D = new List<Node>();
@@ -555,6 +564,42 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+
+
+    IEnumerator LocateCamera()
+    {
+        coroutineRunning = true;
+        int highestFitness = 0;
+        int indexI = 0;
+        int indexJ = 0;
+        for(int i = 0; i < species.Count; i++)
+        {
+            for(int j = 0; j < species[i].snakes.Count; j++)
+            {
+                if (species[i].snakes[j].GetComponent<Snake>().boardScript.gameRunning)
+                {
+                    
+                    indexI = i;
+                    indexJ = j;
+                }
+            }
+        }
+        try
+        {
+            cam.transform.position = species[indexI].snakes[indexJ].GetComponent<Snake>().boardScript.transform.position;
+            cam.transform.position += new Vector3(Board.boarderSizeX / 2, Board.boarderSizeX / 2, -10);
+        }
+        catch(Exception e)
+        {
+            print("cam couldnt be assigned");
+        }
+        
+        
+
+        yield return new WaitForSeconds(1);
+        coroutineRunning = false;
     }
     
     

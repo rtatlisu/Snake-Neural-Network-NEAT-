@@ -1,6 +1,10 @@
 {
     "nodesPerLayer": [
-        12,
+        13,
+        2,
+        2,
+        1,
+        1,
         4
     ],
     "layers1D": [
@@ -29,7 +33,7 @@
             "layerIndex": 2
         },
         {
-            "value": 0.6470588445663452,
+            "value": 0.4117647111415863,
             "type": "Input",
             "nodeNumber": 4,
             "state": false,
@@ -77,7 +81,7 @@
             "layerIndex": 8
         },
         {
-            "value": 0.3529411852359772,
+            "value": 0.5882353186607361,
             "type": "Input",
             "nodeNumber": 10,
             "state": false,
@@ -101,35 +105,91 @@
             "layerIndex": 11
         },
         {
-            "value": 0.9991755485534668,
-            "type": "Output",
+            "value": -99.0,
+            "type": "Bias",
             "nodeNumber": 13,
+            "state": true,
+            "layer": 0,
+            "layerIndex": 12
+        },
+        {
+            "value": 0.0037584006786346437,
+            "type": "Hidden",
+            "nodeNumber": 21,
             "state": false,
             "layer": 1,
             "layerIndex": 0
         },
         {
-            "value": 0.9995236396789551,
-            "type": "Output",
-            "nodeNumber": 14,
+            "value": 0.9998622536659241,
+            "type": "Hidden",
+            "nodeNumber": 23,
             "state": false,
             "layer": 1,
             "layerIndex": 1
         },
         {
-            "value": 0.0,
+            "value": 0.0932944118976593,
+            "type": "Hidden",
+            "nodeNumber": 19,
+            "state": false,
+            "layer": 2,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.05346513167023659,
+            "type": "Hidden",
+            "nodeNumber": 20,
+            "state": false,
+            "layer": 2,
+            "layerIndex": 1
+        },
+        {
+            "value": 0.8933541178703308,
+            "type": "Hidden",
+            "nodeNumber": 22,
+            "state": false,
+            "layer": 3,
+            "layerIndex": 0
+        },
+        {
+            "value": 1.796011228627492e-9,
+            "type": "Hidden",
+            "nodeNumber": 18,
+            "state": false,
+            "layer": 4,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.9404755234718323,
+            "type": "Output",
+            "nodeNumber": 14,
+            "state": false,
+            "layer": 5,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.8782939314842224,
             "type": "Output",
             "nodeNumber": 15,
             "state": false,
-            "layer": 1,
-            "layerIndex": 2
+            "layer": 5,
+            "layerIndex": 1
         },
         {
-            "value": 0.0009770498145371676,
+            "value": 0.4167059063911438,
             "type": "Output",
             "nodeNumber": 16,
             "state": false,
-            "layer": 1,
+            "layer": 5,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.5,
+            "type": "Output",
+            "nodeNumber": 17,
+            "state": false,
+            "layer": 5,
             "layerIndex": 3
         }
     ],
@@ -159,7 +219,7 @@
             "layerIndex": 2
         },
         {
-            "value": 0.6470588445663452,
+            "value": 0.4117647111415863,
             "type": "Input",
             "nodeNumber": 4,
             "state": false,
@@ -207,7 +267,7 @@
             "layerIndex": 8
         },
         {
-            "value": 0.3529411852359772,
+            "value": 0.5882353186607361,
             "type": "Input",
             "nodeNumber": 10,
             "state": false,
@@ -231,39 +291,116 @@
             "layerIndex": 11
         },
         {
-            "value": 0.9991755485534668,
-            "type": "Output",
+            "value": -99.0,
+            "type": "Bias",
             "nodeNumber": 13,
+            "state": true,
+            "layer": 0,
+            "layerIndex": 12
+        },
+        {
+            "value": 0.9404755234718323,
+            "type": "Output",
+            "nodeNumber": 14,
+            "state": false,
+            "layer": 5,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.8782939314842224,
+            "type": "Output",
+            "nodeNumber": 15,
+            "state": false,
+            "layer": 5,
+            "layerIndex": 1
+        },
+        {
+            "value": 0.4167059063911438,
+            "type": "Output",
+            "nodeNumber": 16,
+            "state": false,
+            "layer": 5,
+            "layerIndex": 2
+        },
+        {
+            "value": 0.5,
+            "type": "Output",
+            "nodeNumber": 17,
+            "state": false,
+            "layer": 5,
+            "layerIndex": 3
+        },
+        {
+            "value": 1.796011228627492e-9,
+            "type": "Hidden",
+            "nodeNumber": 18,
+            "state": false,
+            "layer": 4,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.0932944118976593,
+            "type": "Hidden",
+            "nodeNumber": 19,
+            "state": false,
+            "layer": 2,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.05346513167023659,
+            "type": "Hidden",
+            "nodeNumber": 20,
+            "state": false,
+            "layer": 2,
+            "layerIndex": 1
+        },
+        {
+            "value": 0.0037584006786346437,
+            "type": "Hidden",
+            "nodeNumber": 21,
             "state": false,
             "layer": 1,
             "layerIndex": 0
         },
         {
-            "value": 0.9995236396789551,
-            "type": "Output",
-            "nodeNumber": 14,
+            "value": 0.8933541178703308,
+            "type": "Hidden",
+            "nodeNumber": 22,
+            "state": false,
+            "layer": 3,
+            "layerIndex": 0
+        },
+        {
+            "value": 0.9998622536659241,
+            "type": "Hidden",
+            "nodeNumber": 23,
             "state": false,
             "layer": 1,
             "layerIndex": 1
-        },
-        {
-            "value": 0.0,
-            "type": "Output",
-            "nodeNumber": 15,
-            "state": false,
-            "layer": 1,
-            "layerIndex": 2
-        },
-        {
-            "value": 0.0009770498145371676,
-            "type": "Output",
-            "nodeNumber": 16,
-            "state": false,
-            "layer": 1,
-            "layerIndex": 3
         }
     ],
     "genomeConnectionGenes": [
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Bias",
+                "nodeNumber": 13,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 12
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 9.489999771118164,
+            "enabled": false,
+            "innovationNumber": 6
+        },
         {
             "In": {
                 "value": 1.0,
@@ -274,125 +411,41 @@
                 "layerIndex": 6
             },
             "Out": {
-                "value": 0.0009770498145371676,
-                "type": "Output",
-                "nodeNumber": 16,
-                "state": false,
-                "layer": 1,
-                "layerIndex": 3
-            },
-            "weight": -6.929999828338623,
-            "enabled": true,
-            "innovationNumber": 1
-        },
-        {
-            "In": {
-                "value": -99.0,
-                "type": "Input",
-                "nodeNumber": 3,
-                "state": false,
-                "layer": 0,
-                "layerIndex": 2
-            },
-            "Out": {
-                "value": 0.0009770498145371676,
-                "type": "Output",
-                "nodeNumber": 16,
-                "state": false,
-                "layer": 1,
-                "layerIndex": 3
-            },
-            "weight": 5.360000133514404,
-            "enabled": true,
-            "innovationNumber": 2
-        },
-        {
-            "In": {
-                "value": -99.0,
-                "type": "Input",
-                "nodeNumber": 5,
-                "state": false,
-                "layer": 0,
-                "layerIndex": 4
-            },
-            "Out": {
-                "value": 0.9991755485534668,
-                "type": "Output",
-                "nodeNumber": 13,
-                "state": false,
-                "layer": 1,
-                "layerIndex": 0
-            },
-            "weight": 7.100000381469727,
-            "enabled": true,
-            "innovationNumber": 3
-        },
-        {
-            "In": {
-                "value": -99.0,
-                "type": "Input",
-                "nodeNumber": 3,
-                "state": false,
-                "layer": 0,
-                "layerIndex": 2
-            },
-            "Out": {
-                "value": 0.0,
+                "value": 0.8782939314842224,
                 "type": "Output",
                 "nodeNumber": 15,
                 "state": false,
-                "layer": 1,
-                "layerIndex": 2
-            },
-            "weight": -10.870000839233399,
-            "enabled": true,
-            "innovationNumber": 4
-        },
-        {
-            "In": {
-                "value": 0.3529411852359772,
-                "type": "Input",
-                "nodeNumber": 10,
-                "state": false,
-                "layer": 0,
-                "layerIndex": 9
-            },
-            "Out": {
-                "value": 0.9995236396789551,
-                "type": "Output",
-                "nodeNumber": 14,
-                "state": false,
-                "layer": 1,
+                "layer": 5,
                 "layerIndex": 1
             },
-            "weight": 6.840000152587891,
+            "weight": 1.1700000762939454,
             "enabled": true,
-            "innovationNumber": 5
+            "innovationNumber": 13
         },
         {
             "In": {
                 "value": -99.0,
                 "type": "Input",
-                "nodeNumber": 5,
+                "nodeNumber": 9,
                 "state": false,
                 "layer": 0,
-                "layerIndex": 4
+                "layerIndex": 8
             },
             "Out": {
-                "value": 0.9995236396789551,
+                "value": 0.5,
                 "type": "Output",
-                "nodeNumber": 14,
+                "nodeNumber": 17,
                 "state": false,
-                "layer": 1,
-                "layerIndex": 1
+                "layer": 5,
+                "layerIndex": 3
             },
-            "weight": -4.110000133514404,
+            "weight": 4.220000267028809,
             "enabled": true,
-            "innovationNumber": 10
+            "innovationNumber": 29
         },
         {
             "In": {
-                "value": 0.6470588445663452,
+                "value": 0.4117647111415863,
                 "type": "Input",
                 "nodeNumber": 4,
                 "state": false,
@@ -400,45 +453,1137 @@
                 "layerIndex": 3
             },
             "Out": {
-                "value": 0.9995236396789551,
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 6.659999847412109,
+            "enabled": false,
+            "innovationNumber": 19
+        },
+        {
+            "In": {
+                "value": 0.4117647111415863,
+                "type": "Input",
+                "nodeNumber": 4,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 3
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -9.399999618530274,
+            "enabled": false,
+            "innovationNumber": 62
+        },
+        {
+            "In": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": -3.1600000858306886,
+            "enabled": true,
+            "innovationNumber": 44
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 2,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 3.2799999713897707,
+            "enabled": true,
+            "innovationNumber": 2
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Bias",
+                "nodeNumber": 13,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 12
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 2.2100000381469728,
+            "enabled": true,
+            "innovationNumber": 38
+        },
+        {
+            "In": {
+                "value": 0.4117647111415863,
+                "type": "Input",
+                "nodeNumber": 4,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 3
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 7.7300004959106449,
+            "enabled": false,
+            "innovationNumber": 16
+        },
+        {
+            "In": {
+                "value": 0.5882353186607361,
+                "type": "Input",
+                "nodeNumber": 10,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 9
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": -7.570001125335693,
+            "enabled": true,
+            "innovationNumber": 54
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Bias",
+                "nodeNumber": 13,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 12
+            },
+            "Out": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "weight": -2.2699999809265138,
+            "enabled": true,
+            "innovationNumber": 71
+        },
+        {
+            "In": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 3.5400002002716066,
+            "enabled": true,
+            "innovationNumber": 72
+        },
+        {
+            "In": {
+                "value": 0.5882353186607361,
+                "type": "Input",
+                "nodeNumber": 10,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 9
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 7.360000133514404,
+            "enabled": true,
+            "innovationNumber": 31
+        },
+        {
+            "In": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.5,
+                "type": "Output",
+                "nodeNumber": 17,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 3
+            },
+            "weight": 4.809999942779541,
+            "enabled": true,
+            "innovationNumber": 67
+        },
+        {
+            "In": {
+                "value": 0.0,
+                "type": "Input",
+                "nodeNumber": 1,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 3.0199997425079347,
+            "enabled": true,
+            "innovationNumber": 39
+        },
+        {
+            "In": {
+                "value": 1.0,
+                "type": "Input",
+                "nodeNumber": 7,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 6
+            },
+            "Out": {
+                "value": 0.9404755234718323,
                 "type": "Output",
                 "nodeNumber": 14,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 0
+            },
+            "weight": 2.760000228881836,
+            "enabled": true,
+            "innovationNumber": 32
+        },
+        {
+            "In": {
+                "value": 1.0,
+                "type": "Input",
+                "nodeNumber": 7,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 6
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -5.600000381469727,
+            "enabled": true,
+            "innovationNumber": 43
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 6,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 5
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": -10.440000534057618,
+            "enabled": true,
+            "innovationNumber": 1
+        },
+        {
+            "In": {
+                "value": 0.4117647111415863,
+                "type": "Input",
+                "nodeNumber": 4,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 3
+            },
+            "Out": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "weight": -1.0299999713897706,
+            "enabled": true,
+            "innovationNumber": 107
+        },
+        {
+            "In": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": -0.7799999713897705,
+            "enabled": true,
+            "innovationNumber": 103
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 6,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 5
+            },
+            "Out": {
+                "value": 0.9404755234718323,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 0
+            },
+            "weight": 6.080000400543213,
+            "enabled": true,
+            "innovationNumber": 41
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 12,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 11
+            },
+            "Out": {
+                "value": 0.5,
+                "type": "Output",
+                "nodeNumber": 17,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 3
+            },
+            "weight": 20.630001068115236,
+            "enabled": true,
+            "innovationNumber": 18
+        },
+        {
+            "In": {
+                "value": 0.5882353186607361,
+                "type": "Input",
+                "nodeNumber": 10,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 9
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -12.200000762939454,
+            "enabled": true,
+            "innovationNumber": 58
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 8,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 7
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 11.850000381469727,
+            "enabled": true,
+            "innovationNumber": 56
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 2,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "weight": -3.4800000190734865,
+            "enabled": false,
+            "innovationNumber": 116
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.9404755234718323,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 0
+            },
+            "weight": 2.640000104904175,
+            "enabled": true,
+            "innovationNumber": 57
+        },
+        {
+            "In": {
+                "value": 0.0,
+                "type": "Input",
+                "nodeNumber": 1,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -11.600000381469727,
+            "enabled": true,
+            "innovationNumber": 63
+        },
+        {
+            "In": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": -1.5299999713897706,
+            "enabled": true,
+            "innovationNumber": 34
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": -14.04000186920166,
+            "enabled": true,
+            "innovationNumber": 51
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 3,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 2
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -9.480000495910645,
+            "enabled": true,
+            "innovationNumber": 59
+        },
+        {
+            "In": {
+                "value": 0.0,
+                "type": "Input",
+                "nodeNumber": 1,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "weight": -8.959999084472657,
+            "enabled": true,
+            "innovationNumber": 91
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "weight": -0.9800000190734863,
+            "enabled": false,
+            "innovationNumber": 87
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -4.119999885559082,
+            "enabled": true,
+            "innovationNumber": 88
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 9,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 8
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": -0.019999999552965165,
+            "enabled": true,
+            "innovationNumber": 53
+        },
+        {
+            "In": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 3.5900001525878908,
+            "enabled": true,
+            "innovationNumber": 86
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.0037584006786346437,
+                "type": "Hidden",
+                "nodeNumber": 21,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 0
+            },
+            "weight": -5.579999923706055,
+            "enabled": true,
+            "innovationNumber": 98
+        },
+        {
+            "In": {
+                "value": 0.0037584006786346437,
+                "type": "Hidden",
+                "nodeNumber": 21,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "weight": -1.0800000429153443,
+            "enabled": true,
+            "innovationNumber": 114
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "weight": 9.34000015258789,
+            "enabled": true,
+            "innovationNumber": 120
+        },
+        {
+            "In": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": -4.53000020980835,
+            "enabled": true,
+            "innovationNumber": 61
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 5,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 4
+            },
+            "Out": {
+                "value": 0.0037584006786346437,
+                "type": "Hidden",
+                "nodeNumber": 21,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 0
+            },
+            "weight": -7.589999675750732,
+            "enabled": true,
+            "innovationNumber": 126
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 5,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 4
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 3.549999952316284,
+            "enabled": true,
+            "innovationNumber": 50
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 5,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 4
+            },
+            "Out": {
+                "value": 0.9404755234718323,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 0
+            },
+            "weight": 7.360000133514404,
+            "enabled": true,
+            "innovationNumber": 35
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 3,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 2
+            },
+            "Out": {
+                "value": 0.0932944118976593,
+                "type": "Hidden",
+                "nodeNumber": 19,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 0
+            },
+            "weight": -2.1399998664855959,
+            "enabled": true,
+            "innovationNumber": 68
+        },
+        {
+            "In": {
+                "value": 0.0,
+                "type": "Input",
+                "nodeNumber": 1,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "weight": 4.759999752044678,
+            "enabled": true,
+            "innovationNumber": 112
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 12,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 11
+            },
+            "Out": {
+                "value": 0.9404755234718323,
+                "type": "Output",
+                "nodeNumber": 14,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 0
+            },
+            "weight": 0.7300000190734863,
+            "enabled": true,
+            "innovationNumber": 21
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 2,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": 1.4600000381469727,
+            "enabled": true,
+            "innovationNumber": 12
+        },
+        {
+            "In": {
+                "value": 0.4117647111415863,
+                "type": "Input",
+                "nodeNumber": 4,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 3
+            },
+            "Out": {
+                "value": 0.8933541178703308,
+                "type": "Hidden",
+                "nodeNumber": 22,
+                "state": false,
+                "layer": 3,
+                "layerIndex": 0
+            },
+            "weight": 4.710000038146973,
+            "enabled": true,
+            "innovationNumber": 165
+        },
+        {
+            "In": {
+                "value": 0.8933541178703308,
+                "type": "Hidden",
+                "nodeNumber": 22,
+                "state": false,
+                "layer": 3,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": -8.239999771118164,
+            "enabled": true,
+            "innovationNumber": 139
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 9,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 8
+            },
+            "Out": {
+                "value": 1.796011228627492e-9,
+                "type": "Hidden",
+                "nodeNumber": 18,
+                "state": false,
+                "layer": 4,
+                "layerIndex": 0
+            },
+            "weight": 2.1700000762939455,
+            "enabled": true,
+            "innovationNumber": 66
+        },
+        {
+            "In": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.8933541178703308,
+                "type": "Hidden",
+                "nodeNumber": 22,
+                "state": false,
+                "layer": 3,
+                "layerIndex": 0
+            },
+            "weight": 3.4799997806549074,
+            "enabled": true,
+            "innovationNumber": 128
+        },
+        {
+            "In": {
+                "value": 0.8933541178703308,
+                "type": "Hidden",
+                "nodeNumber": 22,
+                "state": false,
+                "layer": 3,
+                "layerIndex": 0
+            },
+            "Out": {
+                "value": 0.4167059063911438,
+                "type": "Output",
+                "nodeNumber": 16,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 2
+            },
+            "weight": -7.179999828338623,
+            "enabled": true,
+            "innovationNumber": 143
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 6,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 5
+            },
+            "Out": {
+                "value": 0.5,
+                "type": "Output",
+                "nodeNumber": 17,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 3
+            },
+            "weight": -6.289999961853027,
+            "enabled": true,
+            "innovationNumber": 17
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 12,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 11
+            },
+            "Out": {
+                "value": 0.8782939314842224,
+                "type": "Output",
+                "nodeNumber": 15,
+                "state": false,
+                "layer": 5,
+                "layerIndex": 1
+            },
+            "weight": 5.539999961853027,
+            "enabled": true,
+            "innovationNumber": 30
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 11,
+                "state": false,
+                "layer": 0,
+                "layerIndex": 10
+            },
+            "Out": {
+                "value": 0.8933541178703308,
+                "type": "Hidden",
+                "nodeNumber": 22,
+                "state": false,
+                "layer": 3,
+                "layerIndex": 0
+            },
+            "weight": 2.390000343322754,
+            "enabled": true,
+            "innovationNumber": 146
+        },
+        {
+            "In": {
+                "value": -99.0,
+                "type": "Input",
+                "nodeNumber": 2,
+                "state": true,
+                "layer": 0,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.9998622536659241,
+                "type": "Hidden",
+                "nodeNumber": 23,
                 "state": false,
                 "layer": 1,
                 "layerIndex": 1
             },
-            "weight": 8.089999198913575,
+            "weight": 8.890000343322754,
             "enabled": true,
-            "innovationNumber": 7
+            "innovationNumber": 170
+        },
+        {
+            "In": {
+                "value": 0.9998622536659241,
+                "type": "Hidden",
+                "nodeNumber": 23,
+                "state": false,
+                "layer": 1,
+                "layerIndex": 1
+            },
+            "Out": {
+                "value": 0.05346513167023659,
+                "type": "Hidden",
+                "nodeNumber": 20,
+                "state": false,
+                "layer": 2,
+                "layerIndex": 1
+            },
+            "weight": -2.4499998092651369,
+            "enabled": true,
+            "innovationNumber": 168
         }
     ],
-    "currentNumOfNodes": 17,
+    "currentNumOfNodes": 24,
     "whichMove": [
-        false,
         true,
+        false,
         false,
         false
     ],
     "synapse": {
         "In": {
-            "value": 0.6470588445663452,
-            "type": "Input",
-            "nodeNumber": 4,
-            "state": false,
-            "layer": 0,
-            "layerIndex": 3
-        },
-        "Out": {
-            "value": 0.9995236396789551,
-            "type": "Output",
-            "nodeNumber": 14,
+            "value": 0.9998622536659241,
+            "type": "Hidden",
+            "nodeNumber": 23,
             "state": false,
             "layer": 1,
             "layerIndex": 1
         },
-        "weight": 8.089999198913575,
+        "Out": {
+            "value": 0.05346513167023659,
+            "type": "Hidden",
+            "nodeNumber": 20,
+            "state": false,
+            "layer": 2,
+            "layerIndex": 1
+        },
+        "weight": -2.4499998092651369,
         "enabled": true,
-        "innovationNumber": 7
+        "innovationNumber": 168
     },
     "nnInstance": {
         "instanceID": 0

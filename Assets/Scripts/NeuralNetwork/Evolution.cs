@@ -902,7 +902,7 @@ public static class Evolution
         }
         int Out = Random.Range(0, nodes.Count);
         catchLoop = 0;
-        while (nodes[Out].type.Equals("Input") && catchLoop < 9999)
+        while ((nodes[Out].type.Equals("Input") || nodes[Out].type.Equals("Bias")) && catchLoop < 9999)
         {
             ++catchLoop;
             if(catchLoop == 9999)
@@ -923,11 +923,7 @@ public static class Evolution
             }
         }
 
-        if (nodes[In].type.Equals("Hidden") && nodes[Out].type.Equals("Hidden"))
-        {
-            Debug.Log("hhere");
-        }
-
+  
         output = new List<int>();
         output.Add(In);
         output.Add(Out);

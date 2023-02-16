@@ -506,14 +506,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 433e97cd9358e49189cbcdac6314b7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfBoards: 30
+  numOfBoards: 100
   board: {fileID: 5325111345271286513, guid: 6ab7f9ee532644c029fa4cbd7a5400eb, type: 3}
   listOfBoards: []
-  boardsPerRow: 6
-  boardsPerColumn: 6
-  gameSpeed: 0.01
-  addNodeProb: 0.01
-  addConnectionProb: 0.1
+  boardsPerRow: 10
+  boardsPerColumn: 10
+  gameSpeed: 0.001
+  addNodeProb: 0.03
+  addConnectionProb: 0.3
   alterWeightProb: 0.8
   gen: 1
   speciesTxt: {fileID: 0}
@@ -521,7 +521,7 @@ MonoBehaviour:
   punishedSpecies: -1
   storedConnections: []
   compat_threshhold: 6
-  num_species_target: 3
+  num_species_target: 10
   mutationPower: 2.5
   geneReenableProb: 0
   multipleStructuralMutations: 0
@@ -535,7 +535,8 @@ MonoBehaviour:
   run: 0
   multiRunsPerGen: 1
   nextGen: 0
-  loadSaveFile: 1
+  loadSaveFile: 0
+  drawNetworks: 1
   boardNumber: 0
   speciesNumsCopy: 
 --- !u!4 &1451708316

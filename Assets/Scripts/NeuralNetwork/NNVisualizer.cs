@@ -7,6 +7,7 @@ public class NNVisualizer : MonoBehaviour
 {
     Board boardScript;
     public GameObject node;
+    public GameObject biasNode;
     public GameObject instantiateNode;
     int numOfNodes = 0;
     bool createNode;
@@ -94,6 +95,7 @@ public class NNVisualizer : MonoBehaviour
             layers[whichLayer].Add(instantiateNode);
             //layers[whichLayer][layerIndex] = instantiateNode;
             numOfNodes++;
+            /*
             if(numOfNodes == 12)
             {
                 if(layers[0].Count%2 == 0)
@@ -112,7 +114,32 @@ public class NNVisualizer : MonoBehaviour
                 }
                 
             }
-            
+            */
+        }
+        else if(type.Equals("Bias"))
+        {
+            instantiateNode = GameObject.Instantiate(biasNode, transform.position +
+            new Vector3(whichLayer * 5, -layers[whichLayer].Count * 2, 0), Quaternion.identity);
+            instantiateNode.transform.parent = gameObject.transform;
+            instantiateNode.name = "Bias";
+            layers[whichLayer].Add(instantiateNode);
+            numOfNodes++;
+
+            if (layers[0].Count % 2 == 0)
+            {
+                centerNode1 = layers[0].Count / 2;
+                centerNode2 = (layers[0].Count / 2) - 1;
+                centerPosY = (layers[0][centerNode1].transform.localPosition.y +
+                                layers[0][centerNode2].transform.localPosition.y) / 2;
+
+            }
+            else
+            {
+                centerNode1 = (layers[0].Count - 1) / 2;
+                centerNode2 = 0;
+                centerPosY = layers[0][centerNode1].transform.localPosition.y;
+            }
+
         }
        
         else if(type.Equals("Output"))
