@@ -94,6 +94,7 @@ If not set optimally, snakes could find unwishful loopholes that cause large fit
 An exemplary fitness function is the following: <br>
 $$fitness = moveToFruitCounter + fruitsEaten*(10+fruitBonus)$$ <br>
 *moveToFruitCounter*: Snake moves closer to fruit &#8594; +1 fitness, snake moves away from fruit &#8594; -1.5 fitness<br>
+This rewards going towards the fruit and punishes snakes that develop a looping pattern to gain points for idle behavior. <br>
 *fruitsEaten*: Number of fruits eaten<br>
 *fruitBonus*: increases by 5 for each fruit eaten. This rewards eating multiple fruits as this indicates that this is an intentional behavior and not just luck. <br>
 <br>
