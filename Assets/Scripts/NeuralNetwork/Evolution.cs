@@ -628,6 +628,7 @@ public static class Evolution
     else
     {
         Network network = parents[0].GetComponent<Snake>().brain;
+        network.whichMove = null;
         for(int i = 0; i < network.genomeConnectionGenes.Count; i++)
         {
                 NetworkManager.instance.CreateSynapse(childBrain, network.genomeConnectionGenes[i].GetIn(), network.genomeConnectionGenes[i].GetOut(),
@@ -847,8 +848,8 @@ public static class Evolution
             Debug.Log("shouldnt happen2");
         }
 
-        NetworkManager.instance.CreateSynapse(network,network.genomeNodeGenes[In], network.genomeNodeGenes[Out], network.RandomWeight(NetworkManager.instance.minWeight,
-        NetworkManager.instance.maxWeight), true);
+        NetworkManager.instance.CreateSynapse(network,network.genomeNodeGenes[In], network.genomeNodeGenes[Out], network.RandomWeight(GameManager.instance.minWeight,
+        GameManager.instance.maxWeight), true);
 
       
             
@@ -867,7 +868,7 @@ public static class Evolution
             //small percentage to assign a random value (-10,10)
             if(rnd <= prob)
             {
-                network.genomeConnectionGenes[randomConnection].SetWeight(network.RandomWeight(NetworkManager.instance.minWeight, NetworkManager.instance.maxWeight));
+                network.genomeConnectionGenes[randomConnection].SetWeight(network.RandomWeight(GameManager.instance.minWeight, GameManager.instance.maxWeight));
             }
             //high probability to alter the weight a little (-2.5,2.5)
             else
@@ -886,7 +887,7 @@ public static class Evolution
     //2) a hidden node being in a layer after another hidden node cant connect from right(In) to left(Out)
     //little optimization:
     //we could limit the random.range to only the output nodes, since they never change their node number
-    static List<int> FindValidConnection(List<Node> nodes)
+    public static List<int> FindValidConnection(List<Node> nodes)
     {
         List<int> output = new List<int>();
         int In = Random.Range(0, nodes.Count);
@@ -1186,6 +1187,7 @@ public static class Evolution
                 {
                     if (GameManager.instance.species[i].snakes[x].GetComponent<Snake>().elite)
                     {
+                        GameManager.instance.species[i].snakes[x].GetComponent<Snake>().brain.whichMove = null;
                         GameManager.instance.networks.Add(GameManager.instance.species[i].snakes[x].GetComponent<Snake>().brain);
                         GameManager.instance.species[i].setOffspring(GameManager.instance.species[i].getOffspring() - 1);
                         break;
@@ -1258,7 +1260,7 @@ public static class Evolution
                             }
                         }
                     }
-
+                    network.whichMove = null;
                     GameManager.instance.networks.Add(network);
                     GameManager.instance.speciesNumsCopy.Add(GameManager.instance.species[i].getId());
                 }
@@ -1270,6 +1272,7 @@ public static class Evolution
             {
                 for(int j = 0; j < GameManager.instance.species[i].snakes.Count; j++)
                 {
+                    GameManager.instance.species[i].snakes[j].GetComponent<Snake>().brain.whichMove = null;
                     GameManager.instance.networks.Add(GameManager.instance.species[i].snakes[j].GetComponent<Snake>().brain);
                     GameManager.instance.speciesNumsCopy.Add(GameManager.instance.species[i].getId());
                 }

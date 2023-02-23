@@ -537,6 +537,7 @@ MonoBehaviour:
   nextGen: 0
   loadSaveFile: 0
   drawNetworks: 1
+  startinConnections: 0.1
   boardNumber: 0
   speciesNumsCopy: 
 --- !u!4 &1451708316

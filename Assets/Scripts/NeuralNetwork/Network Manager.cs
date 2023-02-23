@@ -8,8 +8,6 @@ public class NetworkManager
     public int numOfInputNodes = 12;
     public int nodeCount;
     public double mutationRate = 0.05;
-    public float minWeight = -10;
-    public float maxWeight = 10;
     public List<Network> listOfNetworks;
     public static int innovationNumber = 1;
     
@@ -120,7 +118,7 @@ public class NetworkManager
         
       //  Debug.Log("Excess: "+excessOrDisjoint.Count);
         float c1 = 1.0f;
-        float c2 = 0f;
+        float c2 = 1.0f;
 
        /* 
         if(genomeA.Count < 20 && genomeB.Count < 20)

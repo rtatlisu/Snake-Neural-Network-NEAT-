@@ -13,6 +13,8 @@ public class Snake : MonoBehaviour
     public List<GameObject> snakeComposites;
      Vector2 headPos;
      bool up,right,left,down;
+    //bool straight, left, right;
+    bool[] currentDirection;
      bool coroutineRunning;
     public  List<Vector2> formerPosition;
      public static int numOfSnakes = 0;
@@ -41,6 +43,7 @@ public class Snake : MonoBehaviour
     public string role;
     public int species = 0;
     public bool elite = false;
+    Vector3 direction_;
 
     void Awake()
     {
@@ -49,7 +52,9 @@ public class Snake : MonoBehaviour
     }
 
     void Start()
-    {        
+    {
+        //north, east, southh ,west
+        currentDirection = new bool[] { false, false, false, false };
         board = transform.parent.gameObject;
         boardScript = board.GetComponent<Board>();
         boardScript.gameRunning = false;
@@ -93,11 +98,42 @@ public class Snake : MonoBehaviour
 
         customBoarder = whichSnakeAmI*25 + 20;
         numOfSnakes++;
+        /*
+        if (snakeComposites[0].transform.position + Vector3.up == snakeComposites[1].transform.position)
+        {
+            currentDirection[0] = false;
+            currentDirection[1] = false;
+            currentDirection[2] = true;
+            currentDirection[3] = false;
+        }
+        else if (snakeComposites[0].transform.position + Vector3.right == snakeComposites[1].transform.position)
+        {
+            currentDirection[0] = false;
+            currentDirection[1] = false;
+            currentDirection[2] = false;
+            currentDirection[3] = true;
+        }
+        else if (snakeComposites[0].transform.position + Vector3.down == snakeComposites[1].transform.position)
+        {
+            currentDirection[0] = true;
+            currentDirection[1] = false;
+            currentDirection[2] = false;
+            currentDirection[3] = false;
+        }
+        else if (snakeComposites[0].transform.position + Vector3.left == snakeComposites[1].transform.position)
+        {
+            currentDirection[0] = false;
+            currentDirection[1] = true;
+            currentDirection[2] = false;
+            currentDirection[3] = false;
+        }
+        */
     }
     
 
     void Update()
     {
+       
         if(!coroutineRunning &&boardScript && boardScript.gameRunning)
         {
              StartCoroutine(Direction());           
@@ -105,6 +141,7 @@ public class Snake : MonoBehaviour
 
         if(brain.whichMove == null)
         {
+        
            Vision(snakeComposites[0].transform.position);
 
             inputs = new List<VisionInfo>{north, east,
@@ -115,193 +152,344 @@ public class Snake : MonoBehaviour
         }
 
 
-       
-        if(brain != null && brain.whichMove[0] &&!boardScript.gameOver && !down && snakeComposites[0].transform.position
-        +Vector3.up != snakeComposites[1].transform.position)
+        
+         if(brain != null && brain.whichMove[0] &&!boardScript.gameOver)
+         {
+            if (!down)
+            {
+                up = true;
+                down = false;
+                right = false;
+                left = false;
+                boardScript.gameRunning = true;
+            }
+         }
+         else if (brain != null && brain.whichMove[1] && !boardScript.gameOver)
+         {
+            if (!up)
+            {
+                up = false;
+                down = true;
+                right = false;
+                left = false;
+                boardScript.gameRunning = true;
+            }
+         }
+         else if (brain != null && brain.whichMove[2] && !boardScript.gameOver)
+         {
+            if (!left)
+            {
+                up = false;
+                down = false;
+                right = true;
+                left = false;
+                boardScript.gameRunning = true;
+            }
+         }
+         else if (brain != null && brain.whichMove[3] &&!boardScript.gameOver)
+         {
+            if (!right)
+            {
+                up = false;
+                down = false;
+                right = false;
+                left = true;
+                boardScript.gameRunning = true;
+            }
+         }
+         //important if snakes want to move illegal moves, i.e. moving up if immediate tail is up
+         else if (brain != null && !boardScript.gameOver /*&& !boardScript.gameRunning*/)
+         {
+             boardScript.gameOver = true;
+             boardScript.gameRunning = false;
+         }
+        
+     /*  
+        if (brain != null && brain.whichMove[0] && !boardScript.gameOver )
         {
-            up = true;
-            down = false;
-            right = false;
+            straight = true;
             left = false;
+            right = false;
             boardScript.gameRunning = true;
         }
-        else if (brain != null && brain.whichMove[1] && !boardScript.gameOver && !up&& snakeComposites[0].transform.position
-        +Vector3.down != snakeComposites[1].transform.position)
+        else if (brain != null && brain.whichMove[1] && !boardScript.gameOver)
         {
-            up = false;
-            down = true;
-            right = false;
-            left = false;
-            boardScript.gameRunning = true;
-        }
-        else if (brain != null && brain.whichMove[2] && !boardScript.gameOver && !left&& snakeComposites[0].transform.position
-        +Vector3.right != snakeComposites[1].transform.position)
-        {
-            up = false;
-            down = false;
-            right = true;
-            left = false;
-            boardScript.gameRunning = true;
-        }
-        else if (brain != null && brain.whichMove[3] &&!boardScript.gameOver && !right&& snakeComposites[0].transform.position
-        +Vector3.left != snakeComposites[1].transform.position)
-        {
-            up = false;
-            down = false;
-            right = false;
+            straight = false;
             left = true;
+            right = false;
             boardScript.gameRunning = true;
         }
-        //important if snakes want to move illegal moves, i.e. moving up if immediate tail is up
+        else if (brain != null && brain.whichMove[2] && !boardScript.gameOver)
+        {
+            straight = false;
+            left = false;
+            right = true;
+            boardScript.gameRunning = true;
+        }
         else if (brain != null && !boardScript.gameOver && !boardScript.gameRunning)
         {
             boardScript.gameOver = true;
             boardScript.gameRunning = false;
         }
-    }
+      
+*/
 
+    }
+    
     IEnumerator Direction()
     {
         coroutineRunning = true;
 
         //draw visions, i.e. to the food, north, east, west and south wall
-       /*
-       if(boardScript.fruitScript != null)
-        {
-            distanceToFood = distanceToObject(snakeComposites[0].transform.position,
-            boardScript.fruitScript.transform.position);   
-        }
-        distanceToNorthWall = distanceToObject(snakeComposites[0].transform.position,
-        WallPosition(snakeComposites[0].transform.position,boardScript.northWall));
+        /*
+        if(boardScript.fruitScript != null)
+         {
+             distanceToFood = distanceToObject(snakeComposites[0].transform.position,
+             boardScript.fruitScript.transform.position);   
+         }
+         distanceToNorthWall = distanceToObject(snakeComposites[0].transform.position,
+         WallPosition(snakeComposites[0].transform.position,boardScript.northWall));
 
-        distanceToEastWall = distanceToObject(snakeComposites[0].transform.position,
-        WallPosition(snakeComposites[0].transform.position,boardScript.eastWall));
+         distanceToEastWall = distanceToObject(snakeComposites[0].transform.position,
+         WallPosition(snakeComposites[0].transform.position,boardScript.eastWall));
 
-        distanceToSouthWall = distanceToObject(snakeComposites[0].transform.position,
-        WallPosition(snakeComposites[0].transform.position,boardScript.southWall));
+         distanceToSouthWall = distanceToObject(snakeComposites[0].transform.position,
+         WallPosition(snakeComposites[0].transform.position,boardScript.southWall));
 
-        distanceToWestWall = distanceToObject(snakeComposites[0].transform.position,
-        WallPosition(snakeComposites[0].transform.position,boardScript.westWall));
-      */
- 
-  
-        if(up)
-        {   
-            if((snakeComposites[0].transform.localPosition+Vector3.up).y < board.transform.position.y
-            +Board.boarderSizeX-1)
-            {
-                for(int i = 1; i < snakeComposites.Count; i++)
-                {
-                    if((snakeComposites[0].transform.localPosition+Vector3.up).y ==
-                    snakeComposites[i].transform.position.y &&
-                    (snakeComposites[0].transform.localPosition+Vector3.up).x ==
-                    snakeComposites[i].transform.position.x)
-                    {
-                        boardScript.HandleCollision();
-                    }
-                }
+         distanceToWestWall = distanceToObject(snakeComposites[0].transform.position,
+         WallPosition(snakeComposites[0].transform.position,boardScript.westWall));
+       */
 
-                if(!boardScript.gameOver)
-                {
-                    AlignTailOnMove();
-                    snakeComposites[0].transform.localPosition+=Vector3.up;  
-                    boardScript.distTravelled++;
-                    boardScript.movesLeft--;
-                    boardScript.CalcFitness();   
-                }   
-            }
         
-            else
-            {
-                boardScript.HandleCollision();     
-            }
-        }
-        else if(down)
+              if(up)
+              {   
+                  if((snakeComposites[0].transform.localPosition+Vector3.up).y < board.transform.position.y
+                  +Board.boarderSizeX-1)
+                  {
+                      for(int i = 1; i < snakeComposites.Count; i++)
+                      {
+                          if((snakeComposites[0].transform.localPosition+Vector3.up).y ==
+                          snakeComposites[i].transform.position.y &&
+                          (snakeComposites[0].transform.localPosition+Vector3.up).x ==
+                          snakeComposites[i].transform.position.x)
+                          {
+                              boardScript.HandleCollision();
+                          }
+                      }
+
+                      if(!boardScript.gameOver)
+                      {
+                          AlignTailOnMove();
+                          snakeComposites[0].transform.localPosition+=Vector3.up;  
+                          boardScript.distTravelled++;
+                          boardScript.movesLeft--;
+                          boardScript.CalcFitness();   
+                      }   
+                  }
+
+                  else
+                  {
+                      boardScript.HandleCollision();     
+                  }
+              }
+              else if(down)
+              {
+                  if((snakeComposites[0].transform.localPosition+Vector3.down).y > board.transform.position.y)
+                  {
+                      for(int i = 1; i < snakeComposites.Count; i++)
+                      {
+                          if((snakeComposites[0].transform.localPosition+Vector3.down).y ==
+                          snakeComposites[i].transform.position.y &&
+                          (snakeComposites[0].transform.localPosition+Vector3.down).x ==
+                          snakeComposites[i].transform.position.x)
+                          {
+                              boardScript.HandleCollision();               
+                          }
+                      }
+
+                      if(!boardScript.gameOver)
+                      {
+                          AlignTailOnMove();
+                          snakeComposites[0].transform.localPosition+=Vector3.down; 
+                          boardScript.distTravelled++;
+                          boardScript.movesLeft--;
+                          boardScript.CalcFitness();   
+                      }                
+                  }
+                  else
+                  {
+                      boardScript.HandleCollision();
+                  }
+              }
+              else if(right)
+              {
+                  if((snakeComposites[0].transform.localPosition+Vector3.right).x < board.transform.position.x+
+                  Board.boarderSizeX-1)
+                  {
+                      for(int i = 1; i < snakeComposites.Count; i++)
+                      {
+                          if((snakeComposites[0].transform.localPosition+Vector3.right).y ==
+                          snakeComposites[i].transform.position.y &&
+                          (snakeComposites[0].transform.localPosition+Vector3.right).x ==
+                          snakeComposites[i].transform.position.x)
+                          {
+                              boardScript.HandleCollision();
+                          }
+                      }
+                      if(!boardScript.gameOver)
+                      {
+                          AlignTailOnMove();
+                          snakeComposites[0].transform.localPosition+=Vector3.right;
+                          boardScript.distTravelled++;  
+                          boardScript.movesLeft--;
+                          boardScript.CalcFitness();      
+                      }               
+                  }
+                  else
+                  {
+                      boardScript.HandleCollision();
+                  }
+              }
+              else if(left)
+              {   
+                  if((snakeComposites[0].transform.localPosition+Vector3.left).x > board.transform.position.x)
+                  {
+                      for(int i = 1; i < snakeComposites.Count; i++)
+                      {
+                          if((snakeComposites[0].transform.localPosition+Vector3.left).y ==
+                          snakeComposites[i].transform.position.y &&
+                          (snakeComposites[0].transform.localPosition+Vector3.left).x ==
+                          snakeComposites[i].transform.position.x)
+                          {
+                              boardScript.HandleCollision();
+                          }
+                      }
+                      if(!boardScript.gameOver)
+                      {
+                          AlignTailOnMove();
+                          snakeComposites[0].transform.localPosition+=Vector3.left;  
+                          boardScript.distTravelled++;
+                          boardScript.movesLeft--;
+                          boardScript.CalcFitness();
+                      }             
+                  }
+                  else
+                  {
+                      boardScript.HandleCollision();
+                  }
+              }
+
+
+              
+       
+   /*    
+        if (straight)
         {
-            if((snakeComposites[0].transform.localPosition+Vector3.down).y > board.transform.position.y)
+            
+            if (ValidateMove(currentDirection))
             {
-                for(int i = 1; i < snakeComposites.Count; i++)
+                for (int i = 1; i < snakeComposites.Count; i++)
                 {
-                    if((snakeComposites[0].transform.localPosition+Vector3.down).y ==
+                    
+                    if ((snakeComposites[0].transform.localPosition + direction_).y ==
                     snakeComposites[i].transform.position.y &&
-                    (snakeComposites[0].transform.localPosition+Vector3.down).x ==
+                    (snakeComposites[0].transform.localPosition + direction_).x ==
                     snakeComposites[i].transform.position.x)
                     {
-                        boardScript.HandleCollision();               
+                        boardScript.HandleCollision();
                     }
                 }
 
-                if(!boardScript.gameOver)
+                if (!boardScript.gameOver)
                 {
                     AlignTailOnMove();
-                    snakeComposites[0].transform.localPosition+=Vector3.down; 
-                    boardScript.distTravelled++;
-                    boardScript.movesLeft--;
-                    boardScript.CalcFitness();   
-                }                
-            }
-            else
-            {
-                boardScript.HandleCollision();
-            }
-        }
-        else if(right)
-        {
-            if((snakeComposites[0].transform.localPosition+Vector3.right).x < board.transform.position.x+
-            Board.boarderSizeX-1)
-            {
-                for(int i = 1; i < snakeComposites.Count; i++)
-                {
-                    if((snakeComposites[0].transform.localPosition+Vector3.right).y ==
-                    snakeComposites[i].transform.position.y &&
-                    (snakeComposites[0].transform.localPosition+Vector3.right).x ==
-                    snakeComposites[i].transform.position.x)
-                    {
-                        boardScript.HandleCollision();
-                    }
-                }
-                if(!boardScript.gameOver)
-                {
-                    AlignTailOnMove();
-                    snakeComposites[0].transform.localPosition+=Vector3.right;
-                    boardScript.distTravelled++;  
-                    boardScript.movesLeft--;
-                    boardScript.CalcFitness();      
-                }               
-            }
-            else
-            {
-                boardScript.HandleCollision();
-            }
-        }
-        else if(left)
-        {   
-            if((snakeComposites[0].transform.localPosition+Vector3.left).x > board.transform.position.x)
-            {
-                for(int i = 1; i < snakeComposites.Count; i++)
-                {
-                    if((snakeComposites[0].transform.localPosition+Vector3.left).y ==
-                    snakeComposites[i].transform.position.y &&
-                    (snakeComposites[0].transform.localPosition+Vector3.left).x ==
-                    snakeComposites[i].transform.position.x)
-                    {
-                        boardScript.HandleCollision();
-                    }
-                }
-                if(!boardScript.gameOver)
-                {
-                    AlignTailOnMove();
-                    snakeComposites[0].transform.localPosition+=Vector3.left;  
+               
+                    snakeComposites[0].transform.localPosition += direction_;
+
                     boardScript.distTravelled++;
                     boardScript.movesLeft--;
                     boardScript.CalcFitness();
-                }             
+                }
+            }
+
+            else
+            {
+                boardScript.HandleCollision();
+            }
+        }
+        else if (left)
+        {
+            bool temp = currentDirection[0];
+            currentDirection[0] = currentDirection[1];
+            currentDirection[1] = currentDirection[2];
+            currentDirection[2] = currentDirection[3];
+            currentDirection[3] = temp;
+        
+            if (ValidateMove(currentDirection))
+            {
+                for (int i = 1; i < snakeComposites.Count; i++)
+                {
+                    //these vectors need to be adjusted to thje correct position, left here
+                    if ((snakeComposites[0].transform.localPosition + direction_).y ==
+                    snakeComposites[i].transform.position.y &&
+                    (snakeComposites[0].transform.localPosition + direction_).x ==
+                    snakeComposites[i].transform.position.x)
+                    {
+                        boardScript.HandleCollision();
+                    }
+                }
+
+                if (!boardScript.gameOver)
+                {
+                    AlignTailOnMove();
+                  
+                    snakeComposites[0].transform.localPosition += direction_;
+                    boardScript.distTravelled++;
+                    boardScript.movesLeft--;
+                    boardScript.CalcFitness();
+                }
             }
             else
             {
                 boardScript.HandleCollision();
             }
         }
+        else if (right)
+        {
+            bool temp = currentDirection[3];
+            currentDirection[3] = currentDirection[2];
+            currentDirection[2] = currentDirection[1];
+            currentDirection[1] = currentDirection[0];
+            currentDirection[0] = temp;
+    
+            if (ValidateMove(currentDirection))
+            {
+                for (int i = 1; i < snakeComposites.Count; i++)
+                {
+                    if ((snakeComposites[0].transform.localPosition + direction_).y ==
+                    snakeComposites[i].transform.position.y &&
+                    (snakeComposites[0].transform.localPosition + direction_).x ==
+                    snakeComposites[i].transform.position.x)
+                    {
+                        boardScript.HandleCollision();
+                    }
+                }
+                if (!boardScript.gameOver)
+                {
+                    AlignTailOnMove();
+                 
+                    snakeComposites[0].transform.localPosition += direction_;
+                    boardScript.distTravelled++;
+                    boardScript.movesLeft--;
+                    boardScript.CalcFitness();
+                }
+            }
+            else
+            {
+                boardScript.HandleCollision();
+            }
+        }
+        */
 
         //update the vision lines
         /*
@@ -387,7 +575,58 @@ public class Snake : MonoBehaviour
         coroutineRunning = false;
     }
 
+
+    bool ValidateMove(bool[] direction)
+    {
+        //north
+        if (direction[0])
+        {
+            if ((snakeComposites[0].transform.localPosition + Vector3.up).y < board.transform.position.y
+            + Board.boarderSizeX - 1)
+            {
+                direction_ = Vector3.up;
+                return true;
+                
+            }
+            else return false;
+
+        }
+        //east
+        else if (direction[1])
+        {
+            if ((snakeComposites[0].transform.localPosition + Vector3.right).x < board.transform.position.x
+                            + Board.boarderSizeX - 1)
+            {
+                direction_ = Vector3.right;
+                return true;
+            }
+            else return false;
+        }
+        //south
+        else if (direction[2])
+        {
+            if ((snakeComposites[0].transform.localPosition + Vector3.down).y > board.transform.position.y)
+            {
+                direction_ = Vector3.down;
+                return true;
+            }
+            else return false;
+        }
+        //west
+        else
+        {
+            if ((snakeComposites[0].transform.localPosition + Vector3.left).x > board.transform.position.x)
+            {
+                direction_ = Vector3.left;
+                return true;
+            }
+            else return false;
+        }
+    }
+
   
+
+
 
     void AlignTailOnMove()
     {

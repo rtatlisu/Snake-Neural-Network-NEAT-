@@ -384,7 +384,7 @@ public class Board : MonoBehaviour
                 snakeScript.brain = SaveData.network;
             }
             
-            snakeScript.brain.UpdateInputNodes(snakeScript.inputs);       
+           // snakeScript.brain.UpdateInputNodes(snakeScript.inputs);       
         }
 
         //thhis is for all children 
@@ -403,7 +403,7 @@ public class Board : MonoBehaviour
             snakeScript.south, snakeScript.west};
 
             snakeScript.brain =  childBrain;
-            snakeScript.brain.UpdateInputNodes(snakeScript.inputs);
+           //snakeScript.brain.UpdateInputNodes(snakeScript.inputs);
 
         } 
 
@@ -499,10 +499,7 @@ public class Board : MonoBehaviour
                 {
                     if (snakeScript.brain.layers[0][i].state == true)
                     {
-                        if (nnvScript.layers[0].Count - 1 < i)
-                        {
-                            print("lol");
-                        }
+                        
                         nnvScript.layers[0][i].
                         GetComponent<SpriteRenderer>().color = Color.green;
                     }

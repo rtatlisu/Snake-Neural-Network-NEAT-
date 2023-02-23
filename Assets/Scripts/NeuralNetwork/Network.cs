@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 
 
 public class Network
@@ -46,6 +47,7 @@ public class Network
         genomeConnectionGenes = new List<Synapse>();
         layers.Add(new List<Node>()); // first layer i.e. input layer
         layers.Add(new List<Node>()); // last layer i.e. output layer
+        whichMove = null;
 
         //input nodes
         for(int i = 0; i < numberOfInputNodes/3; i++)
@@ -57,28 +59,63 @@ public class Network
         }
         AddNode(true, "Bias", 0);
 
+        //xavier weight initialization
+        GameManager.instance.minWeight = -1 / Mathf.Sqrt(layers[0].Count);
+        GameManager.instance.maxWeight = 1 / Mathf.Sqrt(layers[0].Count);
         //output nodes
         for(int i = 0; i < 4; i++)
         {
             AddNode(0, "Output", 1);
         }
-        //to keep order, we insert the first hidden layer between input and output
-        //the second and next hidden layers will always be inserted whhere the output layer is
-        //maybe this works: AddLayer(layers.count-1)
-        //maybe it would make sense to put the addlayer function into the addnode function with condition
-    
-     //   AddNode(0, "Hidden", 1);
-       // AddNode(0, "Hidden", 1);
-       // AddNode(0, "Hidden", 1);
+        if(GameManager.instance.startinConnections != 0.0f && !GameManager.instance.loadSaveFile)
+        {
+            int connectionLimit = layers[0].Count * layers[1].Count;
+            int numConnections = (int)(GameManager.instance.startinConnections * connectionLimit);
+            for (int i = 0; i < numConnections; i++)
+            {
+                List<int> output = Evolution.FindValidConnection(genomeNodeGenes);
+                int In = output[0];
+                int Out = output[1];
+                bool connectionViable = false;
+                while (!connectionViable)
+                {
+                    if (genomeConnectionGenes.Count > 0)
+                    {
 
-       // AddNode(0, "Hidden", 2);
-       // AddNode(0, "Hidden", 2);
-    //    CreateSynapse(genomeNodeGenes[0].nodeNumber, genomeNodeGenes[genomeNodeGenes.Count-2].nodeNumber,5,true);
-    //    CreateSynapse(genomeNodeGenes[2].nodeNumber, genomeNodeGenes[genomeNodeGenes.Count-3].nodeNumber,3,true);
-   
-        //CreateSynapse(genomeNodeGenes[0].nodeNumber, layers[layers.Count-1][layers[layers.Count-1].Count-1].nodeNumber,3,true);
-       // NetworkManager.instance.CreateSynapse(this,genomeNodeGenes[0], layers[layers.Count-1][0],3.0f,true);
-  
+
+                        for (int j = 0; j < genomeConnectionGenes.Count; j++)
+                        {
+
+                            //check if the exact connection exists
+                            if (genomeConnectionGenes[j].GetIn().nodeNumber == (In + 1) && genomeConnectionGenes[j].GetOut().nodeNumber == (Out + 1))
+                            {
+                                connectionViable = false;
+
+                                //infnite loop here should be fixed
+                                output = Evolution.FindValidConnection(genomeNodeGenes);
+                                In = output[0];
+                                Out = output[1];
+                                break;
+                            }
+                            else
+                            {
+                                connectionViable = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        connectionViable = true;
+                    }
+                }
+
+                NetworkManager.instance.CreateSynapse(this, genomeNodeGenes[In], genomeNodeGenes[Out],
+                    RandomWeight(GameManager.instance.minWeight,GameManager.instance.maxWeight), true);
+            }
+        }
+        
+
+
 
 
     }
@@ -90,6 +127,7 @@ public class Network
         genomeConnectionGenes = new List<Synapse>();
         layers.Add(new List<Node>()); // first layer i.e. input layer
         layers.Add(new List<Node>()); // last layer i.e. output layer
+        whichMove = null;
 
         //input nodes
         for (int i = 0; i < input.genomeNodeGenes.Count; i++)
@@ -135,9 +173,10 @@ public class Network
         genomeConnectionGenes = new List<Synapse>();
         layers.Add(new List<Node>()); // first layer i.e. input layer
         layers.Add(new List<Node>()); // last layer i.e. output layer
+        whichMove = null;
 
         //input nodes
-        for(int i = 0; i < numberOfInputNodes/3; i++)
+        for (int i = 0; i < numberOfInputNodes/3; i++)
         {
             AddNode(0, "Input", 0);
             AddNode(false, "Input", 0);
@@ -151,6 +190,9 @@ public class Network
         }
    
     }
+
+
+
 
      float Normalize(int min, int max, int value)
     {
@@ -262,15 +304,7 @@ public class Network
     }
 
 
-   public bool DoWeMutate()
-   {
-        int rnd = Random.Range(1,101);
-        int treshhold = (int)(100*NetworkManager.instance.mutationRate);
-
-        if(rnd <= treshhold) return true;
-        
-        else return false;
-   }
+   
 
    public float RandomWeight(float min, float max)
    {
@@ -313,11 +347,16 @@ public class Network
                         if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].value == -99 &&
                             !genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].type.Equals("Bias"))
                         {
+                            /*
                             if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber-1].state == true)
                             {
                                 sum+=genomeConnectionGenes[f].GetWeight();
                                 sumAltered=true;
                             }
+                            */
+                            
+                            sum += genomeConnectionGenes[f].GetWeight() * (genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber - 1].state == true ? 1 : 0);
+                            sumAltered = true;
                         }
                         else if(genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber - 1].value == -99 &&
                             genomeNodeGenes[genomeConnectionGenes[f].GetIn().nodeNumber - 1].type.Equals("Bias"))
@@ -337,16 +376,22 @@ public class Network
                 {      
                     layers[i][j].value = Sigmoid(sum, biasWeight);
                 }
+                else
+                {
+                    layers[i][j].value = 0.0f;
+                }
             }
         }
    }
 
    public void DetermineOutput()
    {
+       
         //4 output nodes(up,down,right,left)
         //the node with the highest number will be activated
         //when this function is called, the output nodes' values are already set from the feeforward function
-        whichMove = new bool[] {false, false, false, false};
+        // whichMove = new bool[] {false, false, false, false};
+        whichMove = new bool[] { false, false, false, false};
         int curHighestIndex = 0;
         bool indexAssigned = false;
         for(int i = 0; i < layers[layers.Count-1].Count; i++)
@@ -357,13 +402,13 @@ public class Network
                 indexAssigned = true;               
             }
         }
-
+        
         //order: [up, down, right, left]
         if(indexAssigned)
         {
             whichMove[curHighestIndex] = true;
         }
-        
+    
         //now the highest value among the 4 nodes is determined and we know which node it is
         //next step is to fire either up,left,right or down to the snake so it does the move
 

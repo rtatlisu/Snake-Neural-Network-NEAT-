@@ -51,6 +51,10 @@ public class GameManager : MonoBehaviour
     public float compat_threshhold = 4.0f;
     float compat_modifier = 0.3f;
     public int num_species_target = 3;
+    [HideInInspector]
+    public float minWeight = 0;
+    [HideInInspector]
+    public float maxWeight = 0;
     public float mutationPower = 2.5f;
     public float geneReenableProb = 0f;
     public bool multipleStructuralMutations = false;
@@ -68,6 +72,8 @@ public class GameManager : MonoBehaviour
     public bool nextGen = false;
     public bool loadSaveFile;
     public bool drawNetworks;
+    [Range(0.0f,1.0f)]
+    public float startinConnections;
    
 
 
