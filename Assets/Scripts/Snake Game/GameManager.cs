@@ -12,8 +12,11 @@ public class GameManager : MonoBehaviour
     public GameObject board;
     public List<GameObject> listOfBoards;
     Vector2 boardGameObjectLoc;
-    public int boardsPerRow = 1;
-    public int boardsPerColumn = 1;
+    [Header("a*a format")]
+    [Range(5,50)]
+    public int boardSize = 1;
+    int boardsPerRow = 1;
+    int boardsPerColumn = 1;
     [Range(0.001f,1.0f)]
     public float gameSpeed;
     //public int numOfSpecies = 1;
@@ -100,6 +103,13 @@ public class GameManager : MonoBehaviour
          inactiveBoards = new List<GameObject>();
         speciesHighestFitness = new List<int>();
         cam = GameObject.Find("Main Camera");
+        float temp = Mathf.Sqrt(numOfBoards);
+        if(temp%1 != 0)
+        {
+            temp = Mathf.Ceil(temp);
+        }
+        boardsPerColumn = (int)temp;
+        boardsPerRow = (int)temp;
 
     }
     void Start()
@@ -271,6 +281,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    /*
                     //save the gamestate every x runs
                     if(run > 0 && run % 30 == 0)
                     {
@@ -303,7 +314,7 @@ public class GameManager : MonoBehaviour
                         SaveData.save();
                     }
                    
-
+                    */
                    
                     if(run > 0 && run % runsPerGen == 0)
                     {
@@ -404,42 +415,54 @@ public class GameManager : MonoBehaviour
                     }
                     
 
-                    if (nextGen &&  44 == 33)
+                 /*
+                    while(listOfBoards.Count > 0)
                     {
-                        while (inactiveBoards.Count > 0)
+                        Destroy(listOfBoards[0]);
+                        listOfBoards.RemoveAt(0);
+                    }
+                  */  
+                 for(int i = 0; i < listOfBoards.Count; i++)
+                    {
+                        Destroy(listOfBoards[i].GetComponent<Board>().snakeInstance);
+                        listOfBoards[i].GetComponent<Board>().moveToFruitCounter = 0;
+                        listOfBoards[i].GetComponent<Board>().fruitsEaten = 0;
+                        listOfBoards[i].GetComponent<Board>().fruitBonus = 0;
+                        listOfBoards[i].GetComponent<Board>().movesLeft = 100;
+                        listOfBoards[i].GetComponent<Board>().distance = 0;
+                        listOfBoards[i].GetComponent<Board>().fruitScript = null;
+                        Destroy(listOfBoards[i].GetComponent<Board>().fruitInstance);
+                        while(listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().vConnections.Count > 0)
                         {
-                            Destroy(inactiveBoards[0]);
-                            inactiveBoards.RemoveAt(0);
+                            Destroy(listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().vConnections[0]);
+                            listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().vConnections.RemoveAt(0);
                         }
-                        inactiveBoards = new List<GameObject>();
-                        for (int i = 0; i < listOfBoards.Count; i++)
+                        int x = listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().layers.Count;
+                        
+                        for(int j = 0; j < x; j++)
                         {
-                            inactiveBoards.Add(listOfBoards[i]);
-                            inactiveBoards[i].SetActive(false);
+                            int y = listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().layers[j].Count;
+                            for (int k = 0; k < y; k++)
+                            {
+                                Destroy(listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().layers[j][0]);
+                                listOfBoards[i].GetComponent<Board>().nnvInstance.GetComponent<NNVisualizer>().layers[j].RemoveAt(0);
+                            }
                         }
                     }
-                    else
-                    {
-                        while(listOfBoards.Count > 0)
-                        {
-                            Destroy(listOfBoards[0]);
-                            listOfBoards.RemoveAt(0);
-                        }
-                    }
-
 
                    
 
 
-                    listOfBoards = new List<GameObject>();
+                    //listOfBoards = new List<GameObject>();
 
-                    SpawnBoards();
+                   // SpawnBoards();
                     NetworkManager.instance.listOfNetworks = null;
                     NetworkManager.instance.listOfNetworks = new List<Network>();
                  
 
                     for (int i = 0; i < listOfBoards.Count; i++)
                     {
+                        
                         listOfBoards[i].GetComponent<Board>().spawnSnake();
                         listOfBoards[i].GetComponent<Board>().attachSnake();
                         listOfBoards[i].GetComponent<Board>().childBrain = networks[i];
@@ -544,7 +567,7 @@ public class GameManager : MonoBehaviour
 
     public Vector2 boardSpawn()
     {
-        return new Vector2(curBoards*Board.boarderSizeX+curBoards*5, 0);
+        return new Vector2(curBoards*boardSize+curBoards*5, 0);
     }
 
     void SpawnBoards()
@@ -560,7 +583,7 @@ public class GameManager : MonoBehaviour
                 {
 
                     ++boardNumber;
-                    boardGameObjectLoc = new Vector2((j*Board.boarderSizeX) + (j*30), (i*Board.boarderSizeX)+ (i*15));
+                    boardGameObjectLoc = new Vector2((j*boardSize) + (j*40), (i*boardSize)+ (i*25));
                     listOfBoards.Add(Instantiate(board, boardGameObjectLoc, Quaternion.identity));
 
                     //listOfBoards[i*boardsPerRow+j].transform.parent = this.gameObject.transform;
@@ -595,7 +618,7 @@ public class GameManager : MonoBehaviour
         try
         {
             cam.transform.position = species[indexI].snakes[indexJ].GetComponent<Snake>().boardScript.transform.position;
-            cam.transform.position += new Vector3(Board.boarderSizeX / 2, Board.boarderSizeX / 2, -10);
+            cam.transform.position += new Vector3(boardSize / 2, boardSize / 2, -10);
         }
         catch(Exception e)
         {
@@ -606,6 +629,40 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1);
         coroutineRunning = false;
+    }
+
+   public void Save()
+    {
+        //determining best performing species
+        int maxFitnessIndex = 0;
+        for (int i = 0; i < species.Count - 1; i++)
+        {
+            if (species[i].getMaxFitness() < species[i + 1].getMaxFitness())
+            {
+                maxFitnessIndex = i + 1;
+            }
+        }
+        //select a random snake from the species
+        int rnd = UnityEngine.Random.Range(0, species[maxFitnessIndex].snakes.Count);
+        Network network = species[maxFitnessIndex].snakes[rnd].GetComponent<Snake>().brain;
+
+        network.layers1D = new List<Node>();
+        network.nodesPerLayer = new List<int>();
+        for (int i = 0; i < network.layers.Count; i++)
+        {
+            network.nodesPerLayer.Add(network.layers[i].Count);
+            for (int j = 0; j < network.layers[i].Count; j++)
+            {
+                network.layers1D.Add(network.layers[i][j]);
+            }
+        }
+
+
+        SaveData.network = network;
+        SaveData.save();
+
+        print("Saved");
+        
     }
     
     

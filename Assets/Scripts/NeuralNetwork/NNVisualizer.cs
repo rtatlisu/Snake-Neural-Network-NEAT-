@@ -9,13 +9,13 @@ public class NNVisualizer : MonoBehaviour
     public GameObject node;
     public GameObject biasNode;
     public GameObject instantiateNode;
-    int numOfNodes = 0;
+    public int numOfNodes = 0;
     bool createNode;
     public List<List<GameObject>> layers;
-    int numOfConnections = 1;
+   public int numOfConnections = 1;
     int centerNode1;
     int centerNode2;
-    float centerPosY;
+    public float centerPosY;
     public List<GameObject> vConnections;
 
 
@@ -24,13 +24,14 @@ public class NNVisualizer : MonoBehaviour
     {
        
         boardScript = transform.parent.gameObject.GetComponent<Board>();
-        transform.position = transform.parent.position + new Vector3(Board.boarderSizeX-1,Board.boarderSizeX-1,0)
+        transform.position = boardScript.transform.position +  new Vector3(GameManager.instance.boardSize - 1f,(GameManager.instance.boardSize) /2f,0)
         + Vector3.right*2;
         layers = new List<List<GameObject>>();
        // layers.Add(new List<GameObject>());
         vConnections = new List<GameObject>();
-        
-        
+        centerPosY = 0;
+
+       
         
     }
 
@@ -89,15 +90,23 @@ public class NNVisualizer : MonoBehaviour
         {
             
             instantiateNode = GameObject.Instantiate(node, transform.position + 
-            new Vector3(whichLayer*5,-layers[whichLayer].Count*2/*-layerIndex*2*/,0), Quaternion.identity);
+            new Vector3(whichLayer*5,/*-layers[whichLayer].Count*2*/-centerPosY/*-layerIndex*2*/,0), Quaternion.identity);
             instantiateNode.transform.parent = gameObject.transform;
             instantiateNode.name = "Node";
             layers[whichLayer].Add(instantiateNode);
-            //layers[whichLayer][layerIndex] = instantiateNode;
+          
             numOfNodes++;
-            /*
-            if(numOfNodes == 12)
+
+
+            centerPosY++;
+            if (layers[0].Count > 0)
             {
+                for (int i = 0; i < layers[0].Count; i++)
+                {
+                    layers[0][i].transform.position += Vector3.up;
+                }
+            }
+           /*
                 if(layers[0].Count%2 == 0)
                 {
                     centerNode1 = layers[0].Count/2;
@@ -112,18 +121,23 @@ public class NNVisualizer : MonoBehaviour
                     centerNode2 = 0;
                     centerPosY = layers[0][centerNode1].transform.localPosition.y;
                 }
-                
-            }
-            */
+              */  
+            
+            
         }
         else if(type.Equals("Bias"))
         {
             instantiateNode = GameObject.Instantiate(biasNode, transform.position +
-            new Vector3(whichLayer * 5, -layers[whichLayer].Count * 2, 0), Quaternion.identity);
+            new Vector3(whichLayer * 5, /*-layers[whichLayer].Count * 2*/-centerPosY, 0), Quaternion.identity);
             instantiateNode.transform.parent = gameObject.transform;
             instantiateNode.name = "Bias";
             layers[whichLayer].Add(instantiateNode);
             numOfNodes++;
+            
+            for (int i = 0; i < layers[0].Count; i++)
+            {
+                layers[0][i].transform.position += Vector3.up;
+            }
 
             if (layers[0].Count % 2 == 0)
             {

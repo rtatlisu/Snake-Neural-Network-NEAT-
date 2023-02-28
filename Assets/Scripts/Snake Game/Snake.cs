@@ -71,8 +71,8 @@ public class Snake : MonoBehaviour
 
         //instantiate the snakes head and single tail
         snakeComposites.Add(Instantiate(head, new Vector2(
-        Random.Range(2+(int)board.transform.position.x,17+(int)board.transform.position.x),
-        Random.Range(2+(int)board.transform.position.y,17+(int)board.transform.position.y)),Quaternion.identity));
+        Random.Range(2+(int)board.transform.position.x,/*17*/GameManager.instance.boardSize - 3+(int)board.transform.position.x),
+        Random.Range(2+(int)board.transform.position.y,/*17*/GameManager.instance.boardSize - 3 + (int)board.transform.position.y)),Quaternion.identity));
         
      
         snakeComposites[0].transform.parent = this.gameObject.transform;
@@ -264,7 +264,7 @@ public class Snake : MonoBehaviour
               if(up)
               {   
                   if((snakeComposites[0].transform.localPosition+Vector3.up).y < board.transform.position.y
-                  +Board.boarderSizeX-1)
+                  + GameManager.instance.boardSize - 1)
                   {
                       for(int i = 1; i < snakeComposites.Count; i++)
                       {
@@ -324,7 +324,7 @@ public class Snake : MonoBehaviour
               else if(right)
               {
                   if((snakeComposites[0].transform.localPosition+Vector3.right).x < board.transform.position.x+
-                  Board.boarderSizeX-1)
+                  GameManager.instance.boardSize - 1)
                   {
                       for(int i = 1; i < snakeComposites.Count; i++)
                       {
@@ -582,7 +582,7 @@ public class Snake : MonoBehaviour
         if (direction[0])
         {
             if ((snakeComposites[0].transform.localPosition + Vector3.up).y < board.transform.position.y
-            + Board.boarderSizeX - 1)
+            + GameManager.instance.boardSize - 1)
             {
                 direction_ = Vector3.up;
                 return true;
@@ -595,7 +595,7 @@ public class Snake : MonoBehaviour
         else if (direction[1])
         {
             if ((snakeComposites[0].transform.localPosition + Vector3.right).x < board.transform.position.x
-                            + Board.boarderSizeX - 1)
+                            + GameManager.instance.boardSize - 1)
             {
                 direction_ = Vector3.right;
                 return true;
@@ -691,9 +691,9 @@ public class Snake : MonoBehaviour
         west = new VisionInfo(-1,false,false);
         Vector2 currentTile = snakePos;
         int xMin = (int)board.transform.position.x;
-        int xMax = (int)board.transform.position.x + Board.boarderSizeX-1;
+        int xMax = (int)board.transform.position.x + GameManager.instance.boardSize - 1;
         int yMin = (int)board.transform.position.y;
-        int yMax = (int)board.transform.position.y + Board.boarderSizeX-1;
+        int yMax = (int)board.transform.position.y + GameManager.instance.boardSize - 1;
         
         //north
         while((currentTile+Vector2.up).y < yMax)

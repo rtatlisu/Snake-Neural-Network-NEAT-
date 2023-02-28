@@ -16,7 +16,6 @@ public class Board : MonoBehaviour
     public GameObject snakePrefab;
     public GameObject snakeInstance;
     public Snake snakeScript = null;
-    public  static int boarderSizeX = 20;
     Vector2 boardVector;
     public bool gameRunning;
     public bool gameOver;
@@ -36,16 +35,17 @@ public class Board : MonoBehaviour
      public int species = 0;
      public Network childBrain = null;
     public bool start_drawing_nn = false;
-    double distance = 0;
-    float moveToFruitCounter = 0;
-    int fruitBonus = 0;
+    public double distance = 0;
+    public float moveToFruitCounter = 0;
+    public int fruitBonus = 0;
     bool networksDrawn;
      
     
 
     
    void Awake()
-   {   
+   {
+        transform.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(9, GameManager.instance.boardSize);
     speciesRef = transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
     fitnessRef = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
     fruitsRef = transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
@@ -66,27 +66,27 @@ public class Board : MonoBehaviour
 
         northWall = new GameObject("NorthWall");
         northWall.transform.parent = this.gameObject.transform;
-        northWall.transform.position = new Vector2((float)(Board.boarderSizeX-1)/2,Board.boarderSizeX-1);
+        northWall.transform.position = new Vector2((float)(GameManager.instance.boardSize - 1)/2, GameManager.instance.boardSize - 1);
         eastWall = new GameObject("EastWall");
         eastWall.transform.parent = this.gameObject.transform;
-         eastWall.transform.position = new Vector2(Board.boarderSizeX-1,(float)(Board.boarderSizeX-1)/2);
+         eastWall.transform.position = new Vector2(GameManager.instance.boardSize - 1,(float)(GameManager.instance.boardSize - 1)/2);
         southWall = new GameObject("SouthWall");
         southWall.transform.parent = this.gameObject.transform;
-         southWall.transform.position = new Vector2((float)(Board.boarderSizeX-1)/2,0);
+         southWall.transform.position = new Vector2((float)(GameManager.instance.boardSize - 1)/2,0);
         westWall = new GameObject("WestWall");
         westWall.transform.parent = this.gameObject.transform;
-         westWall.transform.position = new Vector2(0,(float)(Board.boarderSizeX-1)/2);
+         westWall.transform.position = new Vector2(0,(float)(GameManager.instance.boardSize - 1)/2);
        
          boardVector = this.gameObject.transform.position;
         for(int i = 0; i < 4; i++)
         {
-            for(int j = 0; j < boarderSizeX; j++)
+            for(int j = 0; j < GameManager.instance.boardSize; j++)
             {
                 if(i==0)
                 {
                     Instantiate(boarderTiles, boardVector, Quaternion.identity).transform.parent=
                     southWall.transform;
-                    if(j < boarderSizeX-1)
+                    if(j < GameManager.instance.boardSize - 1)
                     {
                         boardVector+=Vector2.right;
                     } 
@@ -95,7 +95,7 @@ public class Board : MonoBehaviour
                 {
                     Instantiate(boarderTiles, boardVector, Quaternion.identity).transform.parent=
                     eastWall.transform;
-                    if(j < boarderSizeX-1)
+                    if(j < GameManager.instance.boardSize - 1)
                     {
                         boardVector+=Vector2.up;
                     }
@@ -104,7 +104,7 @@ public class Board : MonoBehaviour
                 {
                     Instantiate(boarderTiles, boardVector, Quaternion.identity).transform.parent=
                     northWall.transform;
-                    if(j < boarderSizeX-1)
+                    if(j < GameManager.instance.boardSize - 1)
                     {
                         boardVector+=Vector2.left;
                     }        
@@ -113,7 +113,7 @@ public class Board : MonoBehaviour
                 {
                     Instantiate(boarderTiles, boardVector, Quaternion.identity).transform.parent=
                     westWall.transform;
-                    if(j < boarderSizeX-1)
+                    if(j < GameManager.instance.boardSize - 1)
                     {
                         boardVector+=Vector2.down;
                     }  
@@ -159,6 +159,11 @@ public class Board : MonoBehaviour
             {
                 start_drawing_nn = false;
                 networksDrawn = false;
+            nnvInstance.GetComponent<NNVisualizer>().layers = new List<List<GameObject>>();
+            nnvInstance.GetComponent<NNVisualizer>().vConnections = new List<GameObject>();
+            nnvInstance.GetComponent<NNVisualizer>().centerPosY = 0;
+            nnvInstance.GetComponent<NNVisualizer>().numOfNodes = 0;
+            nnvInstance.GetComponent<NNVisualizer>().numOfConnections = 0;
             if (GameManager.instance.drawNetworks)
             {
 

@@ -205,7 +205,7 @@ public class Network
         {
             for(int j = 0; j < 3; j+=3)
             {
-                layers[0][j + i*3].value = Normalize(1,18,list[i].wallDist);
+                layers[0][j + i*3].value = Normalize(1,/*18*/GameManager.instance.boardSize - 2,list[i].wallDist);
                 layers[0][j+1 + i*3].state = list[i].tail;
                 layers[0][j+2 + i*3].state = list[i].food;
 
